@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: XXEReader
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: XXEReader
+  template:
+    metadata:
+      labels:
+        app: XXEReader
+    spec:
+      containers:
+        - name: webapp
+          image: ""
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "200m"
+              memory: "256Mi"

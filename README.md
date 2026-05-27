@@ -1,231 +1,257 @@
-# CTF Challenge Templates
+# 🚩 Web Security CTF Challenges
 
-A repository of **CTF challenge templates** (Capture The Flag) — use them as starting points when authoring challenges, deploying a platform, or practicing. Templates will be added over time, organized by category.
+A comprehensive collection of **20 web security CTF challenges** covering the OWASP Top 10 and beyond. Each challenge includes detailed solutions, exploitation guides, and mitigation strategies.
 
-## Table of Contents
-
-- [Purpose](#purpose)
-- [Repository structure (planned)](#repository-structure-planned)
-- [Common platform categories](#common-platform-categories)
-- [CTF challenge types by skill](#ctf-challenge-types-by-skill)
-  - [1. Web Exploitation](#1-web-exploitation-web)
-  - [2. Binary Exploitation](#2-binary-exploitation-pwn--pwning)
-  - [3. Reverse Engineering](#3-reverse-engineering-rev)
-  - [4. Cryptography](#4-cryptography-crypto)
-  - [5. Forensics](#5-forensics)
-  - [6. Miscellaneous](#6-miscellaneous-misc)
-  - [7. OSINT](#7-osint-open-source-intelligence)
-  - [8. Steganography](#8-steganography)
-  - [9. Mobile Security](#9-mobile-security)
-  - [10. Cloud / Container / Infrastructure](#10-cloud--container--infrastructure)
-  - [11. Network](#11-network)
-  - [12. Hardware / IoT](#12-hardware--iot)
-  - [13. AI / ML Security](#13-ai--ml-security)
-- [Challenge metadata guidelines](#challenge-metadata-guidelines)
-
----
-
-## Purpose
-
-- Catalog **common CTF challenge types**, grouped by security skill or technique.
-- Serve as a **reference** when creating new templates in this repo.
-- Not a full challenge list — only a taxonomy of techniques and topics you will see often.
-
-## Repository structure (planned)
+## 📁 Repository Structure
 
 ```
-ctf-challenges/
-├── web/
-├── pwn/
-├── rev/
-├── crypto/
-├── forensics/
-├── misc/
-├── osint/
-├── stego/
-├── mobile/
-├── cloud/
-├── network/
-├── hardware/
-└── ai/
+.
+├── 02-LoginBypass/          # SQL Injection
+├── 03-SecretNote/           # IDOR
+├── 04-FileViewer/           # Path Traversal
+├── 05-CookieMonster/        # Cookie Manipulation
+├── 06-GuestBook/            # XSS
+├── 07-HiddenAdmin/          # Parameter Tampering
+├── 08-PriceTag/             # Price Manipulation
+├── 09-RobotsSecret/         # Information Disclosure
+├── 10-ForgetMe/             # Weak Password Reset
+├── 11-JWTCafe/              # JWT Algorithm Confusion
+├── 12-BlindSearch/          # Blind SQL Injection
+├── 13-UploadShell/          # File Upload RCE
+├── 14-CSRFBank/             # CSRF
+├── 15-XXEReader/            # XXE Injection
+├── 16-RaceCondition/        # Race Condition
+├── 17-SSTINote/             # Server-Side Template Injection
+├── 18-GraphAdmin/           # GraphQL IDOR
+├── 19-TimingOracle/         # Timing Attack
+├── 20-ChainPwn/             # Multi-Step Exploit Chain
+│
+├── ALL_FLAGS.txt            # Quick flag reference
+├── CTF_SOLUTIONS_SUMMARY.md # Quick solutions guide
+├── CTF_COMPLETE_GUIDE.md    # Comprehensive learning guide
+└── PAYLOAD_CHEATSHEET.md    # Common exploitation payloads
 ```
 
-Each folder will hold challenge templates (description, deploy files, sample writeups, etc.) as they are added.
+## 🎯 Quick Start
 
-## Common platform categories
+### For Beginners
+1. Start with **CTF_COMPLETE_GUIDE.md** for an overview
+2. Follow the recommended learning path
+3. Begin with easy challenges (02-09)
+4. Read the `SOLUTION.md` in each challenge folder
 
-Many modern CTF platforms use these **core categories**:
+### For Experienced Users
+1. Check **ALL_FLAGS.txt** for quick reference
+2. Use **PAYLOAD_CHEATSHEET.md** for common payloads
+3. Jump to medium/hard challenges
+4. Try to solve without reading solutions first
 
-| Category   | Brief description                    |
-| ---------- | ------------------------------------ |
-| Web        | Web application exploitation         |
-| Pwn        | Binary exploitation                  |
-| Rev        | Reverse engineering                  |
-| Crypto     | Cryptography                         |
-| Forensics  | Digital forensics (logs, memory, disk) |
-| Misc       | Catch-all / mixed topics             |
-| OSINT      | Open-source intelligence gathering   |
-| Cloud      | Cloud, containers, infrastructure    |
-| Mobile     | Android / iOS                        |
-| Hardware   | IoT, firmware, hardware              |
-| AI         | ML / LLM security (emerging)       |
+## 📊 Challenge Difficulty
+
+| Difficulty | Challenges | Count |
+|------------|-----------|-------|
+| 🟢 Easy | 02, 03, 04, 05, 06, 07, 08, 09 | 8 |
+| 🟡 Medium | 10, 11, 12, 13, 14, 15, 17, 18 | 8 |
+| 🔴 Hard | 16, 19, 20 | 3 |
+
+## 🏆 All Flags
+
+<details>
+<summary>Click to reveal all flags (spoilers!)</summary>
+
+```
+02 - FCTF{sql1_1s_0ld_but_g0ld}
+03 - FCTF{1d0r_1s_ev3rywh3r3}
+04 - FCTF{p4th_tr4v3rs4l_g0es_brrrr}
+05 - FCTF{c00k13s_4r3_n0t_s3cr3ts}
+06 - FCTF{xss_st0l3_my_c00k13}
+07 - FCTF{r0l3_param_byp4ss_ez}
+08 - FCTF{pr1c3_t4mp3r1ng_ch34ts}
+09 - FCTF{r0b0ts_l34k_s3cr3ts}
+10 - FCTF{br0k3n_p4ssw0rd_r3s3t}
+11 - FCTF{jwt_n0n3_4lg_byp4ss}
+12 - FCTF{bl1nd_sql1_1s_p4t13nt}
+13 - FCTF{f1l3_upl04d_byp4ss_rce}
+14 - FCTF{csrf_n0_t0k3n_n0_s3cur1ty}
+15 - FCTF{xxe_r34ds_y0ur_f1l3s}
+16 - FCTF{r4c3_c0nd1t10n_d0ubl3_sp3nd}
+17 - FCTF{sst1_t3mpl4t3_1nj3ct10n}
+18 - FCTF{gr4phql_1d0r_n0_4uth}
+19 - FCTF{t1m1ng_4tt4ck_p4t13nc3}
+20 - FCTF{ch41n_3xpl01t_m4st3r}
+```
+
+</details>
+
+## 📚 Documentation Files
+
+### 📖 Main Guides
+- **CTF_COMPLETE_GUIDE.md** - Comprehensive guide with learning paths, tips, and resources
+- **CTF_SOLUTIONS_SUMMARY.md** - Quick reference for all solutions
+- **PAYLOAD_CHEATSHEET.md** - Common exploitation payloads and techniques
+
+### 🎯 Quick References
+- **ALL_FLAGS.txt** - All flags in plain text format
+- **Individual SOLUTION.md** - Detailed solution in each challenge folder
+
+## 🛠️ Tools You'll Need
+
+### Essential
+- Web Browser (Chrome/Firefox)
+- curl
+- Python 3
+
+### Recommended
+- Burp Suite Community
+- Postman
+- jwt.io
+
+### Advanced
+- SQLMap
+- OWASP ZAP
+- Nikto
+
+## 🎓 What You'll Learn
+
+### Vulnerability Classes
+- ✅ SQL Injection (Classic & Blind)
+- ✅ Cross-Site Scripting (XSS)
+- ✅ Cross-Site Request Forgery (CSRF)
+- ✅ Insecure Direct Object Reference (IDOR)
+- ✅ Path Traversal
+- ✅ XML External Entity (XXE)
+- ✅ Server-Side Template Injection (SSTI)
+- ✅ Authentication Bypass
+- ✅ JWT Vulnerabilities
+- ✅ File Upload Vulnerabilities
+- ✅ Race Conditions
+- ✅ Timing Attacks
+- ✅ GraphQL Security
+- ✅ Business Logic Flaws
+
+### Skills Developed
+- Web application security testing
+- HTTP protocol understanding
+- Browser DevTools proficiency
+- Scripting and automation
+- Exploit development
+- Security code review
+- Vulnerability mitigation
+
+## 🎯 Recommended Learning Path
+
+### Week 1: Fundamentals (Easy Challenges)
+- Day 1-2: Information Disclosure & Client-Side (09, 05, 07)
+- Day 3-4: Access Control (03, 04, 08)
+- Day 5-7: Basic Injection (02, 06)
+
+### Week 2: Intermediate (Medium Challenges)
+- Day 1-2: Authentication (10, 11)
+- Day 3-4: Advanced Injection (12, 15, 17)
+- Day 5-6: File Upload & CSRF (13, 14)
+- Day 7: API Security (18)
+
+### Week 3: Advanced (Hard Challenges)
+- Day 1-3: Race Conditions (16)
+- Day 4-5: Timing Attacks (19)
+- Day 6-7: Exploit Chaining (20)
+
+## 📖 Additional Resources
+
+### Learning Platforms
+- [PortSwigger Web Security Academy](https://portswigger.net/web-security)
+- [OWASP WebGoat](https://owasp.org/www-project-webgoat/)
+- [HackTheBox](https://www.hackthebox.com/)
+- [TryHackMe](https://tryhackme.com/)
+
+### Documentation
+- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
+- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
+- [HackTricks](https://book.hacktricks.xyz/)
+
+## ⚠️ Legal Disclaimer
+
+**IMPORTANT:** These challenges are for educational purposes only.
+
+- ✅ Use only on systems you own or have explicit permission to test
+- ❌ Never use these techniques on production systems without authorization
+- ❌ Unauthorized access to computer systems is illegal
+- ✅ Always follow responsible disclosure practices
+
+## 🤝 Contributing
+
+Contributions are welcome! Feel free to:
+- Report bugs or issues
+- Suggest improvements
+- Add alternative solutions
+- Create new challenges
+
+## 📝 License
+
+Educational use only. Please use responsibly.
+
+## 🎯 Progress Tracker
+
+Track your progress:
+
+```
+Easy Challenges:
+[ ] 02 - LoginBypass
+[ ] 03 - SecretNote
+[ ] 04 - FileViewer
+[ ] 05 - CookieMonster
+[ ] 06 - GuestBook
+[ ] 07 - HiddenAdmin
+[ ] 08 - PriceTag
+[ ] 09 - RobotsSecret
+
+Medium Challenges:
+[ ] 10 - ForgetMe
+[ ] 11 - JWTCafe
+[ ] 12 - BlindSearch
+[ ] 13 - UploadShell
+[ ] 14 - CSRFBank
+[ ] 15 - XXEReader
+[ ] 17 - SSTINote
+[ ] 18 - GraphAdmin
+
+Hard Challenges:
+[ ] 16 - RaceCondition
+[ ] 19 - TimingOracle
+[ ] 20 - ChainPwn
+```
+
+## 💡 Tips for Success
+
+1. **Read the hints** - They're designed to guide you
+2. **Use DevTools** - Inspect everything
+3. **Take notes** - Document your process
+4. **Try variations** - One payload rarely works everywhere
+5. **Be patient** - Some challenges require multiple steps
+6. **Learn from failures** - Understand why something didn't work
+7. **Read the code** - Understanding the vulnerability is key
+
+## 🏅 Achievement Milestones
+
+- 🥉 **Bronze** - Complete all Easy challenges (8/8)
+- 🥈 **Silver** - Complete all Easy + Medium challenges (16/19)
+- 🥇 **Gold** - Complete all challenges (19/19)
+- 💎 **Platinum** - Complete all without reading solutions first
 
 ---
 
-## CTF challenge types by skill
+**Happy Hacking! 🚩**
 
-### 1. Web Exploitation (Web)
-
-| Technique | Notes |
-| --------- | ----- |
-| SQL Injection (SQLi) | Injection via database input |
-| Cross-Site Scripting (XSS) | Reflected / Stored / DOM |
-| Server-Side Request Forgery (SSRF) | Server fetches attacker-controlled URLs |
-| Local / Remote File Inclusion (LFI / RFI) | Include files from server or remote host |
-| Command Injection | OS command execution via input |
-| Authentication Bypass | Circumvent login / auth checks |
-| JWT Attack | Tampering, secret brute force, alg confusion |
-| CSRF | Cross-Site Request Forgery |
-| Deserialization | Unsafe object deserialization |
-| Prototype Pollution | JavaScript object prototype abuse |
-| Race Condition | Time-of-check vs time-of-use bugs |
-| File Upload Vulnerability | Web shell upload / filter bypass |
-| Path Traversal | Read files outside allowed directories |
-| SSTI | Server-Side Template Injection |
-| Business Logic Bug | Application logic flaws, not classic CVEs |
-
-### 2. Binary Exploitation (Pwn / Pwning)
-
-- Buffer Overflow / Stack Overflow
-- Heap Exploitation
-- Format String Vulnerability
-- Return Oriented Programming (ROP)
-- Shellcode Injection
-- Use After Free (UAF)
-- Integer Overflow
-- Race Condition
-- Bypassing mitigations: **NX**, **PIE**, **ASLR**, **Canary**
-
-### 3. Reverse Engineering (Rev)
-
-- Analyzing `.exe`, ELF, APK binaries
-- Obfuscation, anti-debugging
-- Crackme, keygenme
-- Bytecode analysis
-- Introductory malware analysis
-- Decompile / disassemble
-- Dynamic analysis (debugger, tracing)
-
-### 4. Cryptography (Crypto)
-
-- Caesar / Vigenère cipher
-- RSA attacks (small exponent, common modulus, etc.)
-- AES mode weaknesses (ECB, padding issues, etc.)
-- XOR cipher
-- Padding Oracle
-- Hash collision
-- PRNG predictability, LCG attack
-- Lattice attack
-- Timing attack
-
-### 5. Forensics
-
-- PCAP analysis (Wireshark)
-- Memory dump analysis
-- Disk image analysis
-- Metadata extraction
-- Steganography (within forensics)
-- File carving
-- Log analysis
-- USB artifacts, registry analysis
-- Hidden data recovery
-
-### 6. Miscellaneous (Misc)
-
-- QR codes, encoding / decoding
-- CAPTCHA bypass
-- Light OSINT (sometimes its own category)
-- Math puzzles, programming challenges
-- Bash / Python scripting
-- Network traffic, automation
-
-### 7. OSINT (Open Source Intelligence)
-
-- Finding public information (names, locations, timestamps)
-- Social media investigation
-- Image metadata (EXIF)
-- Domain enumeration, DNS recon
-- Git leaks, Google dorking
-- Archive.org and other public archives
-
-### 8. Steganography
-
-Hiding data in:
-
-- Images, audio, video, PDFs
-
-Common techniques:
-
-- LSB extraction
-- Image layer analysis
-- Audio spectrograms
-
-### 9. Mobile Security
-
-- Android APK reversing
-- Frida bypass (runtime hooking)
-- Root detection bypass
-- SSL pinning bypass
-- iOS app analysis
-
-### 10. Cloud / Container / Infrastructure
-
-- Kubernetes misconfiguration
-- Docker escape
-- IAM misconfiguration
-- Secret leaks (env, config, vault)
-- CI/CD exploitation
-- Cloud bucket exposure (S3, GCS, etc.)
-
-### 11. Network
-
-- Packet analysis
-- TCP/IP attacks
-- DNS tunneling
-- ARP spoofing, MITM
-- Protocol reverse engineering
-
-### 12. Hardware / IoT
-
-- UART, JTAG
-- Firmware extraction
-- RFID / NFC
-- Side-channel attacks
-
-### 13. AI / ML Security
-
-> A newer category, increasingly common at CTF events.
-
-- Prompt injection
-- Model extraction
-- LLM jailbreak
-- Data poisoning
-- Adversarial input
+*Remember: The goal is to learn, not just to get flags. Understand why each vulnerability exists and how to prevent it in real applications.*
 
 ---
 
-## Challenge metadata guidelines
+## 📞 Support
 
-When authoring templates or publishing to a platform, include:
+If you have questions or need help:
+1. Read the `SOLUTION.md` file in the challenge folder
+2. Check the `CTF_COMPLETE_GUIDE.md` for tips
+3. Review the `PAYLOAD_CHEATSHEET.md` for common techniques
+4. Try different variations of your exploit
 
-| Field | Examples |
-| ----- | -------- |
-| **Difficulty** | `Easy` · `Medium` · `Hard` · `Insane` |
-| **Tags** | `xss`, `jwt`, `heap`, `rsa`, `k8s`, `docker`, `lsb`, … |
-| **Category** | One of the core categories in the table above |
-
-Tags help filtering and hint at solution paths; difficulty helps balance the scoreboard.
-
----
-
-*This repo is in early setup — per-topic templates will be added over time.*
+Good luck and enjoy learning! 🎓

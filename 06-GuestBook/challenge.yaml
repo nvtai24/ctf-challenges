@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: GuestBook
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: GuestBook
+  template:
+    metadata:
+      labels:
+        app: GuestBook
+    spec:
+      containers:
+        - name: webapp
+          image: ""
+          ports:
+            - containerPort: 5000
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"

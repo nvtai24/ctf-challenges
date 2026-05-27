@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: PriceTag
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: PriceTag
+  template:
+    metadata:
+      labels:
+        app: PriceTag
+    spec:
+      containers:
+        - name: webapp
+          image: ""
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"

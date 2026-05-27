@@ -1,0 +1,93 @@
+===============================================
+CTF CHALLENGES - ALL FLAGS
+===============================================
+
+Challenge 02 - LoginBypass (SQL Injection)
+Flag: FCTF{sql1_1s_0ld_but_g0ld}
+Exploit: admin' --
+
+Challenge 03 - SecretNote (IDOR)
+Flag: FCTF{1d0r_1s_ev3rywh3r3}
+Exploit: /note/3
+
+Challenge 04 - FileViewer (Path Traversal)
+Flag: FCTF{p4th_tr4v3rs4l_g0es_brrrr}
+Exploit: ?file=../secret/flag.txt
+
+Challenge 05 - CookieMonster (Cookie Manipulation)
+Flag: FCTF{c00k13s_4r3_n0t_s3cr3ts}
+Exploit: Edit cookie role=admin
+
+Challenge 06 - GuestBook (XSS)
+Flag: FCTF{xss_st0l3_my_c00k13}
+Exploit: ?q=<script>alert(document.cookie)</script>
+
+Challenge 07 - HiddenAdmin (Parameter Tampering)
+Flag: FCTF{r0l3_param_byp4ss_ez}
+Exploit: /dashboard.jsp?role=admin
+
+Challenge 08 - PriceTag (Price Manipulation)
+Flag: FCTF{pr1c3_t4mp3r1ng_ch34ts}
+Exploit: Edit hidden field price=1.00
+
+Challenge 09 - RobotsSecret (Information Disclosure)
+Flag: FCTF{r0b0ts_l34k_s3cr3ts}
+Exploit: /robots.txt → /user/1
+
+Challenge 10 - ForgetMe (Weak Password Reset)
+Flag: FCTF{br0k3n_p4ssw0rd_r3s3t}
+Exploit: Token = alice2024
+
+Challenge 11 - JWTCafe (JWT Algorithm Confusion)
+Flag: FCTF{jwt_n0n3_4lg_byp4ss}
+Exploit: JWT with alg="none" and role="admin"
+
+Challenge 12 - BlindSearch (Blind SQL Injection)
+Flag: FCTF{bl1nd_sql1_1s_p4t13nt}
+Exploit: Boolean-based SQLi to extract flag
+
+Challenge 13 - UploadShell (File Upload RCE)
+Flag: FCTF{f1l3_upl04d_byp4ss_rce}
+Exploit: Upload Python file to read /app/flag.txt
+
+Challenge 14 - CSRFBank (CSRF)
+Flag: FCTF{csrf_n0_t0k3n_n0_s3cur1ty}
+Exploit: Auto-submit form to transfer money
+
+Challenge 15 - XXEReader (XXE Injection)
+Flag: FCTF{xxe_r34ds_y0ur_f1l3s}
+Exploit: <!ENTITY xxe SYSTEM "file:///app/flag.txt">
+
+Challenge 16 - RaceCondition (Race Condition)
+Flag: FCTF{r4c3_c0nd1t10n_d0ubl3_sp3nd}
+Exploit: Simultaneous /redeem requests
+
+Challenge 17 - SSTINote (Server-Side Template Injection)
+Flag: FCTF{sst1_t3mpl4t3_1nj3ct10n}
+Exploit: {{config['FLAG']}}
+
+Challenge 18 - GraphAdmin (GraphQL IDOR)
+Flag: FCTF{gr4phql_1d0r_n0_4uth}
+Exploit: { user(id: 1) { secret } }
+
+Challenge 19 - TimingOracle (Timing Attack)
+Flag: FCTF{t1m1ng_4tt4ck_p4t13nc3}
+Exploit: Measure timing to extract key: deadbeef42
+
+Challenge 20 - ChainPwn (Multi-Step Exploit Chain)
+Flag: FCTF{ch41n_3xpl01t_m4st3r}
+Exploit: SQLi → JWT → IDOR chain
+
+===============================================
+TOTAL: 19 FLAGS
+===============================================
+
+Quick Reference:
+- Easy: 02-09 (8 challenges)
+- Medium: 10-15, 17-18 (8 challenges)
+- Hard: 16, 19, 20 (3 challenges)
+
+All detailed solutions available in:
+- Individual SOLUTION.md files in each challenge folder
+- CTF_SOLUTIONS_SUMMARY.md (quick reference)
+- CTF_COMPLETE_GUIDE.md (comprehensive guide)

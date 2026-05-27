@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ChainPwn
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ChainPwn
+  template:
+    metadata:
+      labels:
+        app: ChainPwn
+    spec:
+      containers:
+        - name: webapp
+          image: ""
+          ports:
+            - containerPort: 3000
+          resources:
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
