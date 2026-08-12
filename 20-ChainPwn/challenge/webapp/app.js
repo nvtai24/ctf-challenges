@@ -13,7 +13,7 @@ db.exec(`
   CREATE TABLE flags (id INTEGER PRIMARY KEY, owner_id INTEGER, content TEXT);
   INSERT INTO users VALUES (1,'admin','admin_s3cr3t_pw','admin');
   INSERT INTO users VALUES (2,'bob','bob123','user');
-  INSERT INTO flags VALUES (1, 1, 'FCTF{ch41n_3xpl01t_m4st3r}');
+  INSERT INTO flags VALUES (1, 1, '${process.env.FLAG || 'CTF{placeholder}'}');
 `);
 
 // Weak JWT: base64(header).base64(payload).base64(header+payload) — no real sig

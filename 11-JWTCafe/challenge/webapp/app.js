@@ -75,7 +75,7 @@ app.get('/menu', (req,res) => {
     <h1>☕ JWTCafe Menu</h1><div class="card">
     <p>User: <b>${payload.sub}</b> | Role: <b>${role}</b> | Alg: <b>${header.alg}</b></p>
     ${isAdmin
-      ? `<p class="flag">🚩 FCTF{jwt_n0n3_4lg_byp4ss}</p><p>Here's your secret admin menu ☕</p>`
+      ? `<p class="flag">🚩 ${process.env.FLAG || 'CTF{placeholder}'}</p><p>Here's your secret admin menu ☕</p>`
       : `<p class="err">Guest menu only. Admins get the special menu with the flag.</p>
          <p class="hint">Hint: Try setting alg to "none" and role to "admin" in the JWT payload.</p>`}
     </div>

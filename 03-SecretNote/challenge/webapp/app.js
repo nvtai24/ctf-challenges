@@ -12,7 +12,7 @@ const users = {
 const notes = {
   1: { owner: 2, title: 'Shopping List',   content: 'Milk, Eggs, Bread' },
   2: { owner: 2, title: 'Meeting Notes',   content: 'Q3 review at 3pm' },
-  3: { owner: 1, title: '🚩 Admin Secret', content: 'FCTF{1d0r_1s_ev3rywh3r3}' },
+  3: { owner: 1, title: '🚩 Admin Secret', content: process.env.FLAG || 'CTF{placeholder}' },
   4: { owner: 3, title: 'My Diary',        content: 'Today was a good day' },
   5: { owner: 2, title: 'Gym Plan',        content: 'Monday: legs, Tuesday: chest' },
 };
@@ -65,7 +65,7 @@ app.get('/note/:id', (req, res) => {
   if (!req.session.user) return res.redirect('/');
   const note = notes[req.params.id];
   if (!note) return res.send(html('Not Found', '<h2>Note not found</h2><a href="/notes">Back</a>'));
-  const isFlag = note.content.startsWith('FCTF{');
+  const isFlag = req.params.id === '3';
   res.send(html(note.title, `<h2>${note.title}</h2>
     <div class="card">${isFlag ? `<p class="flag">${note.content}</p>` : `<p>${note.content}</p>`}</div>
     <a href="/notes">← Back to my notes</a>`));

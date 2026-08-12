@@ -13,7 +13,7 @@ def init_db():
     cur.executemany("INSERT INTO products VALUES (?,?,?,?)", [
         (1,"Laptop","Electronics",1),(2,"Phone","Electronics",1),(3,"Shirt","Clothing",1),(4,"Jeans","Clothing",1),
     ])
-    cur.execute("INSERT INTO secrets VALUES (1,'flag','FCTF{bl1nd_sql1_1s_p4t13nt}')")
+    cur.execute("INSERT INTO secrets VALUES (1,'flag',?)", (os.environ.get("FLAG", "CTF{placeholder}"),))
     con.commit(); con.close()
 
 TMPL = """<!DOCTYPE html><html><head><title>BlindSearch</title>

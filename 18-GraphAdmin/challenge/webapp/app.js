@@ -7,7 +7,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: 'graph-ctf', resave: false, saveUninitialized: true }));
 
 const users = {
-  1: { id:1, username:'alice', role:'admin', email:'alice@corp.com', secret:'FCTF{gr4phql_1d0r_n0_4uth}' },
+  1: { id:1, username:'alice', role:'admin', email:'alice@corp.com', secret: process.env.FLAG || 'CTF{placeholder}' },
   2: { id:2, username:'bob',   role:'user',  email:'bob@corp.com',   secret:'' },
   3: { id:3, username:'carol', role:'user',  email:'carol@corp.com', secret:'' },
 };

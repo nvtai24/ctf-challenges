@@ -11,7 +11,7 @@ function getAccount(id) {
   return accounts[id];
 }
 
-const FLAG = 'FCTF{r4c3_c0nd1t10n_d0ubl3_sp3nd}';
+const FLAG = process.env.FLAG || 'CTF{placeholder}';
 const style = `<style>body{font-family:monospace;background:#0f0e17;color:#fffffe;padding:40px;max-width:700px;margin:auto}
 h1{color:#ff8906}.card{background:#1a1a2e;border-radius:10px;padding:24px;margin:16px 0}
 button{padding:10px 24px;background:#ff8906;color:#0f0e17;border:none;border-radius:6px;cursor:pointer;font-weight:bold;margin:4px}

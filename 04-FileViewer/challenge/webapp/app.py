@@ -13,7 +13,7 @@ with open(f"{FILES_DIR}/help.txt","w") as f: f.write("Use ?file=readme.txt to vi
 with open(f"{FILES_DIR}/about.txt","w") as f: f.write("FileViewer v1.0 - A simple document viewer for the office.")
 # Hidden flag
 os.makedirs("/app/secret", exist_ok=True)
-with open("/app/secret/flag.txt","w") as f: f.write("FCTF{p4th_tr4v3rs4l_g0es_brrrr}")
+with open("/app/secret/flag.txt","w") as f: f.write(os.environ.get("FLAG", "CTF{placeholder}"))
 
 TMPL = """<!DOCTYPE html><html><head><title>FileViewer</title>
 <style>body{font-family:monospace;background:#fafafa;padding:32px;max-width:900px;margin:auto}

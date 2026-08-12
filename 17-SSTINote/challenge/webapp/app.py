@@ -2,7 +2,7 @@ from flask import Flask, request, render_template_string
 import os
 
 app = Flask(__name__)
-FLAG = "FCTF{sst1_t3mpl4t3_1nj3ct10n}"
+FLAG = os.environ.get("FLAG", "CTF{placeholder}")
 
 BASE_TMPL = """<!DOCTYPE html><html><head><title>SSTINote</title>
 <style>body{font-family:monospace;background:#1b1b2f;color:#e2e2e2;padding:32px;max-width:800px;margin:auto}

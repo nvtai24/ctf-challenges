@@ -14,7 +14,7 @@ def init_db():
         username TEXT, password TEXT, role TEXT, flag TEXT)""")
     cur.execute("DELETE FROM users")
     cur.executemany("INSERT INTO users VALUES (?,?,?,?,?)", [
-        (1, "alice",   hashlib.md5(b"sup3rS3cr3t").hexdigest(), "admin", "FCTF{sql1_1s_0ld_but_g0ld}"),
+        (1, "alice",   hashlib.md5(b"sup3rS3cr3t").hexdigest(), "admin", os.environ.get("FLAG", "CTF{placeholder}")),
         (2, "bob",     hashlib.md5(b"password123").hexdigest(), "user",  ""),
         (3, "charlie", hashlib.md5(b"qwerty").hexdigest(),      "user",  ""),
     ])

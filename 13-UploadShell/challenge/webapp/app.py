@@ -4,7 +4,7 @@ import os, uuid
 app = Flask(__name__)
 UPLOAD_DIR = "/app/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
-FLAG = "FCTF{f1l3_upl04d_byp4ss_rce}"
+FLAG = os.environ.get("FLAG", "CTF{placeholder}")
 
 # Write a secret file only accessible via code execution
 with open("/app/flag.txt", "w") as f:

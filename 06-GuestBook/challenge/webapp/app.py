@@ -1,9 +1,10 @@
 from flask import Flask, request, Response
 import html as html_lib
+import os
 
 app = Flask(__name__)
 
-FLAG = "FCTF{xss_st0l3_my_c00k13}"
+FLAG = os.environ.get("FLAG", "CTF{placeholder}")
 POSTS = [
     {"author": "Alice", "msg": "Great website!"},
     {"author": "Bob",   "msg": "Hello everyone :)"},

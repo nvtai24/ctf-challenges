@@ -40,7 +40,7 @@ app.get('/dashboard', (req,res) => {
   if (role === 'admin') {
     res.send(html(`<h1>🍪 CookieMonster</h1>
       <div class="card"><p>Welcome back, <b>${username}</b>! You have admin access.</p>
-      <p class="flag">🚩 FCTF{c00k13s_4r3_n0t_s3cr3ts}</p></div>
+      <p class="flag">🚩 ${process.env.FLAG || 'CTF{placeholder}'}</p></div>
       <a href="/logout">Logout</a>`));
   } else {
     res.send(html(`<h1>🍪 CookieMonster</h1>

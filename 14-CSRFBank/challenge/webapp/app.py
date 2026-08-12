@@ -5,7 +5,7 @@ app = Flask(__name__)
 app.secret_key = "csrfbank-ctf-secret"
 
 accounts = {
-    "alice": {"password": "alice123", "balance": 10000, "flag": "FCTF{csrf_n0_t0k3n_n0_s3cur1ty}"},
+    "alice": {"password": "alice123", "balance": 10000, "flag": os.environ.get("FLAG", "CTF{placeholder}")},
     "bob":   {"password": "bob123",   "balance": 500,   "flag": ""},
 }
 transfer_log = []

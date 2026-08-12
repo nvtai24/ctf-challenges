@@ -5,7 +5,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(session({ secret: 'forgetme-ctf', resave: false, saveUninitialized: true }));
 
 const users = {
-  alice: { password: 'supersecret!', email: 'alice@corp.com', flag: 'FCTF{br0k3n_p4ssw0rd_r3s3t}' },
+  alice: { password: 'supersecret!', email: 'alice@corp.com', flag: process.env.FLAG || 'CTF{placeholder}' },
   bob:   { password: 'bob123',       email: 'bob@corp.com',   flag: '' },
 };
 // Predictable reset tokens: username + "2024"

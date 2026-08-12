@@ -10,7 +10,7 @@ const products = [
   { id: 3, name: 'Enterprise Plan',   price: 99.99 },
   { id: 4, name: '🚩 FLAG TOKEN',     price: 999.99 },
 ];
-const FLAG = 'FCTF{pr1c3_t4mp3r1ng_ch34ts}';
+const FLAG = process.env.FLAG || 'CTF{placeholder}';
 
 const style = `<style>
 body{font-family:monospace;background:#0a192f;color:#ccd6f6;padding:32px;max-width:900px;margin:auto}

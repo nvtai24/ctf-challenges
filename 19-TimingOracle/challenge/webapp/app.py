@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 # Secret API key - players must extract char by char via timing
 SECRET_KEY = "deadbeef42"
-FLAG = "FCTF{t1m1ng_4tt4ck_p4t13nc3}"
+FLAG = os.environ.get("FLAG", "CTF{placeholder}")
 
 TMPL = """<!DOCTYPE html><html><head><title>TimingOracle</title>
 <style>body{font-family:monospace;background:#0d0d0d;color:#00ff41;padding:32px;max-width:900px;margin:auto}

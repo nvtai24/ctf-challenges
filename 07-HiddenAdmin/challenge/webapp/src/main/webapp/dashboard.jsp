@@ -16,7 +16,7 @@ a{color:#ffd700}.badge{background:#ffd700;color:#000;border-radius:4px;padding:2
 <div class="card">
   <p>Welcome, <b><%= user %></b> <span class="badge"><%= role %></span></p>
   <% if("admin".equals(role)){ %>
-    <div class="flag">🚩 FCTF{r0l3_param_byp4ss_ez}</div>
+    <div class="flag">🚩 <%= System.getenv("FLAG") != null ? System.getenv("FLAG") : "CTF{placeholder}" %></div>
   <% } else { %>
     <p class="err">You are a regular staff member. Admins only section is hidden.</p>
     <p style="color:#888">Hint: What if you could change your role?</p>

@@ -1,8 +1,9 @@
 from flask import Flask, request, render_template_string, abort
 app = Flask(__name__)
+import os
 
 USERS = {
-  "1": {"name": "Alice (Admin)", "bio": "System administrator.", "secret": True,  "flag": "FCTF{r0b0ts_l34k_s3cr3ts}"},
+  "1": {"name": "Alice (Admin)", "bio": "System administrator.", "secret": True,  "flag": os.environ.get("FLAG", "CTF{placeholder}")},
   "2": {"name": "Bob",           "bio": "Sales team member.",    "secret": False, "flag": ""},
   "3": {"name": "Carol",         "bio": "Marketing lead.",       "secret": False, "flag": ""},
 }
