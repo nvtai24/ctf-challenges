@@ -2,12 +2,12 @@ from flask import Flask, request, render_template_string, redirect, send_from_di
 import os, uuid
 
 app = Flask(__name__)
-UPLOAD_DIR = "/app/uploads"
+UPLOAD_DIR = "/tmp/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 FLAG = os.environ.get("FLAG", "CTF{placeholder}")
 
 # Write a secret file only accessible via code execution
-with open("/app/flag.txt", "w") as f:
+with open("/tmp/flag.txt", "w") as f:
     f.write(FLAG)
 
 ALLOWED_EXTS = {'.jpg', '.jpeg', '.png', '.gif'}

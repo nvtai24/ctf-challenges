@@ -28,7 +28,7 @@ if filename.endswith(".py"):
 1. Create a Python file `exploit.py`:
 ```python
 # Read the flag file
-with open('/app/flag.txt', 'r') as f:
+with open('/tmp/flag.txt', 'r') as f:
     output = f.read()
 ```
 
@@ -45,7 +45,7 @@ Since the code executes `.py` files, we need to upload a file that:
 
 **Create `payload.jpg`:**
 ```python
-with open('/app/flag.txt', 'r') as f:
+with open('/tmp/flag.txt', 'r') as f:
     output = f.read()
 ```
 
@@ -57,7 +57,7 @@ The server checks extension but might be bypassable:
 **Create `shell.py`:**
 ```python
 import os
-output = open('/app/flag.txt').read()
+output = open('/tmp/flag.txt').read()
 ```
 
 Upload with Content-Type: `image/jpeg` in the HTTP request.
@@ -67,7 +67,7 @@ Looking at the code more carefully, the extension check is strict. However, we c
 
 1. Create a file named `exploit.jpg` with Python code:
 ```python
-output = open('/app/flag.txt').read()
+output = open('/tmp/flag.txt').read()
 ```
 
 2. Upload it normally
@@ -81,12 +81,12 @@ output = open('/app/flag.txt').read()
 
 **File: `shell.py.jpg`** (some systems might process this)
 ```python
-output = open('/app/flag.txt').read()
+output = open('/tmp/flag.txt').read()
 ```
 
 Or simply upload a `.jpg` file containing:
 ```python
-output = open('/app/flag.txt').read()
+output = open('/tmp/flag.txt').read()
 ```
 
 Then try to access it via path traversal or by guessing the UUID.
