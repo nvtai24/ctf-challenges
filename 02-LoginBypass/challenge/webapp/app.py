@@ -4,7 +4,7 @@ import sqlite3, os, hashlib
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-DB = "/app/users.db"
+DB = "/tmp/users.db"
 
 def init_db():
     con = sqlite3.connect(DB)
