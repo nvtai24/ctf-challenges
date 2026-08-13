@@ -78,8 +78,28 @@ Challenge 20 - ChainPwn (Multi-Step Exploit Chain)
 Flag: FCTF{ch41n_3xpl01t_m4st3r}
 Exploit: SQLi → JWT → IDOR chain
 
+Challenge 26 - IntegerOverflow (Logic/Math)
+Flag: FCTF{1nt3g3r_0v3rfl0w_m4k3s_y0u_r1ch}
+Exploit: Buy 214748365 items to underflow the total cost
+
+Challenge 27 - UseAfterFree (Heap)
+Flag: FCTF{u4f_d4ngl1ng_p01nt3r_1s_b4d}
+Exploit: Free chunk 0, allocate AdminTicket, read Note 0
+
+Challenge 28 - ROPChain (Stack)
+Flag: FCTF{r0p_ch41n_m4st3r_g4dg3ts}
+Exploit: pop rdi -> bin/sh -> pop rsi -> 0 -> system
+
+Challenge 29 - OffByOne (Stack)
+Flag: FCTF{0ff_by_0n3_p1v0t_s74ck}
+Exploit: 32 bytes payload to poison null byte on saved RBP
+
+Challenge 30 - Ret2Libc (Stack/ASLR)
+Flag: FCTF{r3t2l1bc_4slr_byp4ss_m4st3r}
+Exploit: Leak puts address, calculate libc base, ROP to system
+
 ===============================================
-TOTAL: 19 FLAGS
+TOTAL: 24 FLAGS
 ===============================================
 
 Quick Reference:

@@ -25,6 +25,11 @@ This document provides a quick reference for all CTF challenges, their vulnerabi
 | 18 | GraphAdmin | GraphQL IDOR | Medium | `FCTF{gr4phql_1d0r_n0_4uth}` |
 | 19 | TimingOracle | Timing Attack | Hard | `FCTF{t1m1ng_4tt4ck_p4t13nc3}` |
 | 20 | ChainPwn | Multi-Step Exploit Chain | Hard | `FCTF{ch41n_3xpl01t_m4st3r}` |
+| 26 | IntegerOverflow | Integer Overflow | Easy | `FCTF{1nt3g3r_0v3rfl0w_m4k3s_y0u_r1ch}` |
+| 27 | UseAfterFree | Heap Use-After-Free | Medium | `FCTF{u4f_d4ngl1ng_p01nt3r_1s_b4d}` |
+| 28 | ROPChain | Return-Oriented Programming | Hard | `FCTF{r0p_ch41n_m4st3r_g4dg3ts}` |
+| 29 | OffByOne | Stack Off-By-One Pivot | Medium | `FCTF{0ff_by_0n3_p1v0t_s74ck}` |
+| 30 | Ret2Libc | ASLR Bypass Ret2Libc | Hard | `FCTF{r3t2l1bc_4slr_byp4ss_m4st3r}` |
 
 ---
 
@@ -182,6 +187,11 @@ This document provides a quick reference for all CTF challenges, their vulnerabi
 
 ### Advanced Exploitation
 - **20 - ChainPwn:** Multi-Vulnerability Exploit Chain (SQLi + IDOR + JWT)
+- **26 - IntegerOverflow:** Integer Overflow / Logic Flaw
+- **27 - UseAfterFree:** Heap Memory Corruption (Dangling Pointer)
+- **28 - ROPChain:** Stack Buffer Overflow & ROP
+- **29 - OffByOne:** Stack Buffer Overflow (Poison Null Byte / Stack Pivot)
+- **30 - Ret2Libc:** Stack Buffer Overflow bypassing ASLR
 
 ---
 
@@ -239,6 +249,11 @@ Each challenge has a detailed solution file in its respective directory:
 - `18-GraphAdmin/SOLUTION.md`
 - `19-TimingOracle/SOLUTION.md`
 - `20-ChainPwn/SOLUTION.md`
+- `26-IntegerOverflow/SOLUTION.md`
+- `27-UseAfterFree/SOLUTION.md`
+- `28-ROPChain/SOLUTION.md`
+- `29-OffByOne/SOLUTION.md`
+- `30-Ret2Libc/SOLUTION.md`
 
 These solution files include:
 - Detailed vulnerability explanation

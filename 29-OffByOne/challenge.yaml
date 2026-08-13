@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: OffByOne
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: OffByOne
+  template:
+    metadata:
+      labels:
+        app: OffByOne
+    spec:
+      containers:
+        - name: webapp
+          image: ""
+          ports:
+            - containerPort: 1337
+          resources:
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
