@@ -6,7 +6,7 @@ import javax.xml.parsers.*;
 import java.io.*;
 
 public class XXEServlet extends HttpServlet {
-    private static final String FLAG_PATH = "/app/flag.txt";
+    private static final String FLAG_PATH = "/tmp/flag.txt";
 
     protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
         res.setContentType("text/html; charset=UTF-8");
@@ -50,7 +50,7 @@ public class XXEServlet extends HttpServlet {
             ".hint{color:#6272a4;font-size:13px}</style></head><body>" +
             "<h1>📄 XXEReader</h1>" +
             "<p>Submit XML to extract product names.</p>" +
-            "<p class='hint'>Hint: Try defining an external entity that reads <code>/app/flag.txt</code></p>" +
+            "<p class='hint'>Hint: Try defining an external entity that reads <code>/tmp/flag.txt</code></p>" +
             "<form method='POST'><textarea name='xml'>" +
             "&lt;?xml version=\"1.0\"?&gt;\n&lt;products&gt;\n  &lt;name&gt;Laptop&lt;/name&gt;\n  &lt;name&gt;Phone&lt;/name&gt;\n&lt;/products&gt;" +
             "</textarea><br><button type='submit'>Parse XML</button></form>" +

