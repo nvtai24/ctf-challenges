@@ -1,11 +1,11 @@
-FROM python:3.11-slim
+FROM python:3.11-alpine
 
-RUN apt-get update && apt-get install -y socat && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache socat
 
 WORKDIR /app
 COPY chall.py .
 
-RUN useradd -m -u 1000 ctf
+RUN adduser -D -u 1000 ctf
 USER 1000
 
 EXPOSE 1337
