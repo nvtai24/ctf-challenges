@@ -1,12 +1,12 @@
-# Challenge 09: RobotsSecret - Solution
+# Thử thách 09: RobotsSecret - Giải pháp
 
-## Vulnerability Type
-**Information Disclosure via robots.txt**
+## Loại lỗ hổng
+**Information Disclosure (Tiết lộ thông tin) qua tệp robots.txt**
 
-## Description
-The application's `robots.txt` file reveals hidden paths and sensitive endpoints that should not be publicly accessible.
+## Mô tả
+Tệp `robots.txt` của ứng dụng làm lộ các đường dẫn ẩn và những endpoint nhạy cảm, vô tình đóng vai trò như một bản đồ giúp hacker điều hướng hệ thống.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```python
 @app.route("/robots.txt")
 def robots():
@@ -14,21 +14,21 @@ def robots():
     return "User-agent: *\nDisallow: /admin-panel\nDisallow: /user/1\nDisallow: /backup/\n"
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-1. Navigate to `/robots.txt`
-2. The file reveals:
-   ```
+1. Truy cập vào `/robots.txt`.
+2. Nội dung file tiết lộ:
+   ```text
    User-agent: *
    Disallow: /admin-panel
    Disallow: /user/1
    Disallow: /backup/
    ```
-3. The `Disallow: /user/1` line reveals a hidden user profile
-4. Navigate to `/user/1`
-5. This displays Alice's admin profile with the flag
+3. Dòng `Disallow: /user/1` cho thấy có một tài khoản người dùng nhạy cảm được giấu kín.
+4. Truy cập đường dẫn: `/user/1`
+5. Trang này tiết lộ hồ sơ quản trị viên (Alice) và hiển thị Flag.
 
-## Direct URL
+## URL trực tiếp
 ```
 http://[host]/user/1
 ```
@@ -38,23 +38,20 @@ http://[host]/user/1
 FCTF{r0b0ts_l34k_s3cr3ts}
 ```
 
-## How It Works
-- `robots.txt` is meant to tell search engines which pages not to crawl
-- However, it's publicly accessible and often reveals sensitive paths
-- Attackers routinely check `robots.txt` for information disclosure
-- The file acts as a roadmap to hidden or sensitive areas
+## Cách hoạt động
+- `robots.txt` được dùng để báo cho các công cụ tìm kiếm (như Google) biết không nên lập chỉ mục (crawl) các trang nào.
+- Tuy nhiên, tệp này luôn có thể truy cập công khai (public).
+- Hacker thường xuyên xem tệp `robots.txt` ở bước do thám (Reconnaissance) để tìm các điểm mù bảo mật.
+- Việc khai báo các đường dẫn nhạy cảm vào đây chẳng khác nào vẽ đường cho hươu chạy.
 
-## Mitigation
-- Don't rely on `robots.txt` for security (it's not access control)
-- Implement proper authentication and authorization
-- Don't list sensitive paths in `robots.txt`
-- Use proper access controls on sensitive endpoints:
+## Biện pháp phòng ngừa (Mitigation)
+- Không dùng `robots.txt` như một biện pháp bảo mật (Security by Obscurity - Bảo mật bằng cách che giấu là một phương pháp tồi).
+- Không liệt kê danh sách các đường dẫn quản trị nhạy cảm vào `robots.txt`.
+- Đảm bảo các endpoint nhạy cảm được bảo vệ bằng cơ chế phân quyền (Authentication & Authorization):
   ```python
   @app.route("/user/<uid>")
   def user(uid):
       if not is_authorized(uid):
           abort(403)
   ```
-- Consider using `X-Robots-Tag` header instead for specific pages
-- Security through obscurity is not security
-- Use authentication for all sensitive resources
+- Cân nhắc trả về HTTP Header `X-Robots-Tag: noindex` cho từng trang ẩn cụ thể thay vì gom vào file `robots.txt`.

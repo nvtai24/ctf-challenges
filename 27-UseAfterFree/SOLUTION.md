@@ -1,18 +1,22 @@
-# 27 - UseAfterFree
+# Thử thách 27: UseAfterFree - Giải pháp
 
-## Description
-A classic heap Use-After-Free (UAF) challenge. The program lets you allocate notes, free them, and allocate an Admin Ticket. 
+## Mô tả
+Một thử thách khai thác Use-After-Free (UAF) kinh điển trên Heap. Chương trình cho phép bạn phân bổ (allocate) các Ghi chú (Notes), giải phóng (free) chúng, và phân bổ một vé Admin (AdminTicket).
 
-## Vulnerability
-When a note is freed (Option 2), its corresponding pointer in the `notes` list is NOT cleared. This leaves a dangling pointer.
-When a new object (like the `AdminTicket`) is allocated, `malloc` reuses the most recently freed memory chunk to save space. 
-Since we still have a pointer to this memory chunk (our freed note), we can read it to access the `AdminTicket`'s properties!
+## Lỗ hổng
+Khi một Ghi chú được giải phóng bằng `free()` (Tùy chọn 2), con trỏ (pointer) trỏ tới nó trong danh sách mảng `notes` KHÔNG bị xóa bỏ (không gán bằng NULL). Điều này để lại một **con trỏ lơ lửng (Dangling Pointer)**.
 
-## Exploit
-1. Connect via TCP (`nc <ip> <port>`).
-2. Create a Note (`1`) with any content. It will be allocated at chunk `0`.
-3. Free Note `0` (`2`). The memory is returned to the heap, but pointer `0` still exists.
-4. Request Admin Ticket (`4`). It will reuse the freed chunk `0`.
-5. Read Note `0` (`3`). The program will interpret the memory at chunk `0` (which is now an `AdminTicket`) as a Note, causing a Type Confusion that leaks the flag!
+Khi một đối tượng mới (như `AdminTicket`) được cấp phát sau đó, bộ quản lý bộ nhớ `malloc` sẽ tận dụng lại chính vùng nhớ (chunk) vừa mới được giải phóng kia để tiết kiệm không gian.
+Bởi vì chúng ta vẫn còn giữ một con trỏ trỏ thẳng vào vùng nhớ này (chính là con trỏ của Ghi chú cũ), chúng ta hoàn toàn có thể ra lệnh "đọc Ghi chú" để ép chương trình in ra các thuộc tính bí mật nằm bên trong `AdminTicket`!
 
-**Flag:** `FCTF{u4f_d4ngl1ng_p01nt3r_1s_b4d}`
+## Khai thác (Exploit)
+1. Kết nối vào máy chủ qua TCP (`nc <ip> <port>`).
+2. Tạo Ghi chú mới (Tùy chọn `1`) với nội dung bất kỳ. Ghi chú này sẽ được cấp phát tại chunk có chỉ mục (index) là `0`.
+3. Giải phóng Ghi chú `0` (Tùy chọn `2`). Vùng nhớ được trả lại cho Heap, nhưng con trỏ `0` vẫn còn tồn tại.
+4. Yêu cầu cấp vé Admin (Tùy chọn `4`). Hành động này sẽ yêu cầu một vùng nhớ mới, và malloc sẽ tái sử dụng lại chunk `0` vừa được giải phóng.
+5. Đọc Ghi chú `0` (Tùy chọn `3`). Chương trình sẽ ngây thơ lấy dữ liệu tại vùng nhớ `0` (lúc này thực chất đang chứa đối tượng `AdminTicket`) và ép kiểu nó thành chuỗi văn bản (Note). Lỗi nhầm lẫn kiểu dữ liệu (Type Confusion) này sẽ trực tiếp làm rò rỉ Flag!
+
+## Flag
+```
+FCTF{u4f_d4ngl1ng_p01nt3r_1s_b4d}
+```

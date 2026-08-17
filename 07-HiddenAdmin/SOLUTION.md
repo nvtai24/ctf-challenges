@@ -1,32 +1,32 @@
-# Challenge 07: HiddenAdmin - Solution
+# Thử thách 07: HiddenAdmin - Giải pháp
 
-## Vulnerability Type
-**Parameter Tampering / Broken Access Control**
+## Loại lỗ hổng
+**Broken Access Control / Insecure Direct Object Reference (Kiểm soát truy cập hỏng / Giả mạo tham số)**
 
-## Description
-The application checks the user's role from a URL parameter instead of the server-side session, allowing users to escalate privileges by manipulating the URL.
+## Mô tả
+Ứng dụng kiểm tra vai trò (role) của người dùng thông qua tham số trên URL thay vì lấy từ Session ở phía server. Điều này cho phép người dùng nâng quyền (privilege escalation) dễ dàng bằng cách thao tác (tamper) tham số URL.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```jsp
 <%
   String role = request.getParameter("role");
   if(role == null) role = (String) session.getAttribute("role");
   // ...
   if("admin".equals(role)){ 
-    // Show flag
+    // Hiện cờ (Flag)
   }
 %>
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-1. Login with credentials: `staff` / `staff2024`
-2. You'll be redirected to `dashboard.jsp` as a regular staff member
-3. The role is checked from URL parameter first, then session
-4. Add `?role=admin` to the URL: `/dashboard.jsp?role=admin`
-5. The application displays the admin content with the flag
+1. Đăng nhập bằng tài khoản: `staff` / `staff2024`
+2. Bạn sẽ được chuyển hướng tới `dashboard.jsp` với tư cách là nhân viên.
+3. Chú ý đoạn code kiểm tra vai trò từ tham số URL trước khi kiểm tra trong session.
+4. Thêm tham số `?role=admin` vào URL: `/dashboard.jsp?role=admin`
+5. Ứng dụng sẽ hiển thị giao diện dành cho quản trị viên và đi kèm với Flag.
 
-## Direct URL
+## URL trực tiếp
 ```
 http://[host]/dashboard.jsp?role=admin
 ```
@@ -36,19 +36,18 @@ http://[host]/dashboard.jsp?role=admin
 FCTF{r0l3_param_byp4ss_ez}
 ```
 
-## How It Works
-- The code first checks `request.getParameter("role")` (URL parameter)
-- Only if that's null, it falls back to `session.getAttribute("role")`
-- This allows any authenticated user to override their role via URL
+## Cách hoạt động
+- Đầu tiên, đoạn mã lấy giá trị từ `request.getParameter("role")` (tham số truyền qua URL).
+- Chỉ khi giá trị này bị `null` (không được truyền) thì nó mới fallback sang lấy giá trị `session.getAttribute("role")` an toàn trên server.
+- Lỗ hổng logic này cho phép bất kỳ ai ghi đè vai trò của họ thông qua URL.
 
-## Mitigation
-- Never trust client-supplied parameters for authorization decisions
-- Always use server-side session for role information:
+## Biện pháp phòng ngừa (Mitigation)
+- Không bao giờ tin tưởng dữ liệu do client cung cấp (như param, cookie, header) khi đưa ra quyết định phân quyền (Authorization).
+- Luôn sử dụng Session được quản lý phía server để lưu và kiểm tra quyền hạn:
   ```jsp
   String role = (String) session.getAttribute("role");
-  // Don't check request parameters for security-critical data
+  // Không đọc request.getParameter đối với các dữ liệu mang tính phân quyền
   ```
-- Implement proper access control checks
-- Use a security framework (Spring Security, Apache Shiro)
-- Validate authorization on every protected resource
-- Follow principle of least privilege
+- Triển khai Access Control chuẩn chỉnh.
+- Sử dụng các security framework phổ biến (như Spring Security, Apache Shiro).
+- Tuân thủ nguyên tắc đặc quyền tối thiểu (Principle of Least Privilege).

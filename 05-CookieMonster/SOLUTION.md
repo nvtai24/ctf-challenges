@@ -1,29 +1,29 @@
-# Challenge 05: CookieMonster - Solution
+# Thử thách 05: CookieMonster - Giải pháp
 
-## Vulnerability Type
-**Insecure Cookie Manipulation / Client-Side Security Control**
+## Loại lỗ hổng
+**Insecure Cookie Manipulation / Client-Side Security Control (Kiểm soát bảo mật qua Cookie thiếu an toàn)**
 
-## Description
-The application stores the user's role in a plain, unencrypted cookie that can be easily modified by the client.
+## Mô tả
+Ứng dụng đang lưu trữ thông tin về vai trò (role) của người dùng bằng một cookie dưới dạng văn bản thuần túy (plain-text), không hề được mã hóa. Bất kỳ ai cũng có thể dễ dàng sửa đổi giá trị này ở phía client.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```javascript
 // VULNERABLE: role stored in plain cookie
 res.cookie('username', 'guest');
 res.cookie('role', 'guest');
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-1. Login with credentials: `guest` / `guest123`
-2. Open browser Developer Tools (F12)
-3. Go to Application/Storage → Cookies
-4. Find the `role` cookie with value `guest`
-5. Edit the cookie value to `admin`
-6. Refresh the page or navigate to `/dashboard`
-7. The application now treats you as an admin
+1. Đăng nhập bằng tài khoản: `guest` / `guest123`
+2. Mở trình duyệt và bật Developer Tools (nhấn F12).
+3. Chuyển sang tab Application (hoặc Storage) → mục Cookies.
+4. Tìm cookie có tên `role` đang mang giá trị `guest`.
+5. Chỉnh sửa giá trị của cookie này thành `admin`.
+6. Tải lại trang (F5) hoặc truy cập trực tiếp vào `/dashboard`.
+7. Hệ thống sẽ nhận diện bạn là quản trị viên.
 
-## Alternative Method (Using curl)
+## Payload thay thế (Dùng cURL)
 ```bash
 curl -H "Cookie: username=guest; role=admin" http://[host]/dashboard
 ```
@@ -33,13 +33,13 @@ curl -H "Cookie: username=guest; role=admin" http://[host]/dashboard
 FCTF{c00k13s_4r3_n0t_s3cr3ts}
 ```
 
-## Mitigation
-- Never store sensitive data (like roles) in client-side cookies
-- Use server-side sessions to store user roles
-- If cookies must be used, sign them with HMAC or encrypt them
-- Use secure session management:
+## Biện pháp phòng ngừa (Mitigation)
+- Không bao giờ lưu trữ các dữ liệu nhạy cảm (như vai trò, quyền hạn) trong cookie ở phía client.
+- Nên dùng Session phía server để lưu trữ thông tin về trạng thái hoặc phân quyền của người dùng.
+- Nếu bắt buộc phải lưu thông tin trong cookie, hãy mã hóa hoặc ký (sign) cookie bằng HMAC để ngăn chặn thay đổi trái phép.
+- Triển khai Session một cách an toàn:
   ```javascript
-  req.session.role = 'guest'; // Store in server-side session
+  req.session.role = 'guest'; // Lưu vào Session phía server
   ```
-- Implement proper authentication tokens (JWT with signature)
-- Set cookies with `httpOnly` and `secure` flags
+- Sử dụng các token xác thực chuẩn (ví dụ: JWT được ký đầy đủ).
+- Luôn bật các cờ bảo mật `HttpOnly` và `Secure` cho cookie.

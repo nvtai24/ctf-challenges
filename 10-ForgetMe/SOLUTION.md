@@ -1,31 +1,31 @@
-# Challenge 10: ForgetMe - Solution
+# Thử thách 10: ForgetMe - Giải pháp
 
-## Vulnerability Type
-**Predictable Password Reset Token / Weak Token Generation**
+## Loại lỗ hổng
+**Predictable Token / Insecure Randomness (Token dự đoán được / Sinh số ngẫu nhiên yếu)**
 
-## Description
-The password reset tokens follow a predictable pattern (username + "2024"), allowing attackers to guess tokens and reset other users' passwords.
+## Mô tả
+Tính năng Đặt lại mật khẩu (Password Reset) sinh ra token theo một quy luật rất dễ dự đoán (tên người dùng + "2024"). Lỗ hổng logic này giúp kẻ tấn công (hacker) đoán được token của bất kỳ user nào và chiếm quyền kiểm soát (account takeover).
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 ```javascript
 // Predictable reset tokens: username + "2024"
 const resetTokens = { alice: 'alice2024', bob: 'bob2024' };
 ```
 
-## Exploitation Steps
+## Khai thác (Exploit)
 
-1. Go to "Forgot password?" link
-2. Enter username: `alice`
-3. The system shows a partially masked token: `a****`
-4. The hint mentions tokens follow a predictable pattern
-5. Try common patterns: `alice2024`, `alice123`, etc.
-6. The correct token is: `alice2024`
-7. Enter token and set a new password
-8. Login as alice with your new password
-9. View the flag on the dashboard
+1. Truy cập trang "Quên mật khẩu?" (Forgot Password).
+2. Nhập username nạn nhân: `alice`.
+3. Hệ thống trả về token bị che một phần: `a****`.
+4. Một gợi ý nhỏ cho thấy token được sinh ra theo quy luật.
+5. Thử các mẫu dễ đoán: `alice2024`, `alice123`, v.v.
+6. Đoán thành công token chuẩn là: `alice2024`.
+7. Dùng token đó ở form Đặt lại mật khẩu để đổi mật khẩu cho Alice.
+8. Đăng nhập vào account Alice với mật khẩu mới.
+9. Đọc Flag ở bảng điều khiển (dashboard).
 
-## Token Pattern
-```
+## Mẫu Token (Token pattern)
+```text
 Token = username + "2024"
 ```
 
@@ -34,22 +34,20 @@ Token = username + "2024"
 FCTF{br0k3n_p4ssw0rd_r3s3t}
 ```
 
-## How It Works
-- Reset tokens should be cryptographically random
-- This implementation uses a simple, predictable formula
-- Attacker can easily guess the token for any user
-- No rate limiting or attempt tracking
+## Cách hoạt động
+- Theo nguyên tắc, token đặt lại mật khẩu phải được sinh ngẫu nhiên an toàn (cryptographically secure).
+- Việc sử dụng công thức ghép chuỗi thuần túy khiến entropy bằng 0.
+- Do không có cơ chế giới hạn số lần thử (Rate Limit), attacker có thể brute-force tự do.
 
-## Mitigation
-- Generate cryptographically secure random tokens:
+## Biện pháp phòng ngừa (Mitigation)
+- Phải tạo token bằng các hàm băm an toàn về mặt mật mã (CSPRNG):
   ```javascript
   const crypto = require('crypto');
   const token = crypto.randomBytes(32).toString('hex');
   ```
-- Store tokens with expiration time in database
-- Implement rate limiting on reset attempts
-- Send tokens only via secure channel (email)
-- Never display tokens in the UI (even partially)
-- Invalidate token after use
-- Add account lockout after multiple failed attempts
-- Use time-based one-time passwords (TOTP) or similar
+- Lưu token vào cơ sở dữ liệu cùng với thời gian hết hạn (expiration time).
+- Áp dụng Rate Limit (giới hạn số lần thử reset).
+- Gửi token qua các kênh an toàn (như Email hoặc SMS OTP).
+- Không bao giờ làm lộ mã token (dù chỉ một phần) trên giao diện Web (frontend).
+- Hủy token lập tức sau 1 lần sử dụng.
+- Khóa tài khoản sau N lần nhập sai token.

