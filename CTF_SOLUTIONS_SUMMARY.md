@@ -30,6 +30,12 @@ Tài liệu này là cuốn sổ tay tra cứu nhanh toàn bộ các thử thác
 | 28 | ROPChain | Return-Oriented Programming | Khó | `FCTF{r0p_ch41n_m4st3r_g4dg3ts}` |
 | 29 | OffByOne | Stack Pivot (Poison Null Byte) | Trung bình | `FCTF{0ff_by_0n3_p1v0t_s74ck}` |
 | 30 | Ret2Libc | Ret2Libc Bypass ASLR | Khó | `FCTF{r3t2l1bc_4slr_byp4ss_m4st3r}` |
+| 31 | HiddenInPlainSight | Steganography (Giấu tin) | Dễ | `FLAG{st3g0_1s_3asy_wh3n_1ts_1n_pl41n_s1ght}` |
+| 32 | CorruptedHeader | Forensics (Sửa Magic Bytes) | Dễ | `FLAG{m4g1c_byt3s_s4v3_th3_d4y}` |
+| 33 | StrangeCipher | Cryptography (XOR Cipher) | Trung bình | `FLAG{x0r_c1ph3r_1s_w34k_but_fun}` |
+| 34 | LogAnalysis | Network Forensics | Dễ | `FLAG{n3tw0rk_tr4ff1c_n3v3r_l13s}` |
+| 35 | ZipInZip | Lập trình (Scripting) | Trung bình | `FLAG{z1p_b0mbs_4r3_4nn0y1ng}` |
+| 36 | ReverseMe | Dịch ngược Python | Trung bình | `FLAG{pyth0n_byt3c0d3_r3v3rs1ng}` |
 
 ---
 
@@ -126,6 +132,30 @@ Tài liệu này là cuốn sổ tay tra cứu nhanh toàn bộ các thử thác
 3. Chèn JWT vừa lấy vào URL để khai thác API bị lỗi IDOR: `/api/flag?uid=1&token=[JWT]`  
 **Flag:** `FCTF{ch41n_3xpl01t_m4st3r}`
 
+### 31 - HiddenInPlainSight (Steganography)
+**Hành động:** Sử dụng lệnh `strings` để trích xuất văn bản từ file ảnh bị giấu cờ.
+**Flag:** `FLAG{st3g0_1s_3asy_wh3n_1ts_1n_pl41n_s1ght}`
+
+### 32 - CorruptedHeader (Forensics)
+**Hành động:** Dùng Hex Editor sửa Magic Bytes `00 00 00...` thành `89 50 4E 47 0D 0A 1A 0A` (PNG).
+**Flag:** `FLAG{m4g1c_byt3s_s4v3_th3_d4y}`
+
+### 33 - StrangeCipher (Cryptography)
+**Hành động:** Viết script Python đảo ngược phép XOR bằng cách XOR lại ciphertext với `secret_key`.
+**Flag:** `FLAG{x0r_c1ph3r_1s_w34k_but_fun}`
+
+### 34 - LogAnalysis (Network Forensics)
+**Hành động:** Trích xuất đoạn mã Base64 truyền trong tham số `?data=` của request nghi vấn và giải mã.
+**Flag:** `FLAG{n3tw0rk_tr4ff1c_n3v3r_l13s}`
+
+### 35 - ZipInZip (Misc)
+**Hành động:** Viết script Python dùng thư viện `zipfile` để tự động giải nén 50 lần vòng lặp.
+**Flag:** `FLAG{z1p_b0mbs_4r3_4nn0y1ng}`
+
+### 36 - ReverseMe (Reverse Engineering)
+**Hành động:** Dùng uncompyle6 hoặc trình decompile online để dịch ngược mã nguồn từ `checker.pyc`.
+**Flag:** `FLAG{pyth0n_byt3c0d3_r3v3rs1ng}`
+
 ---
 
 ## Phân loại lỗ hổng theo chủ đề
@@ -167,6 +197,14 @@ Tài liệu này là cuốn sổ tay tra cứu nhanh toàn bộ các thử thác
 - **28 - ROPChain:** Tràn bộ đệm Stack để thực thi chuỗi ROP (Return-Oriented Programming)
 - **29 - OffByOne:** Stack Pivot thông qua lỗi Poison Null Byte (Tràn 1 byte null)
 - **30 - Ret2Libc:** Vượt rào ASLR bằng cách Leak địa chỉ Base của thư viện libc
+
+### Phân tích Offline & CTF Truyền thống (Không cần deploy)
+- **31 - HiddenInPlainSight:** Steganography (Giấu tin cơ bản bằng văn bản thuần)
+- **32 - CorruptedHeader:** Forensics (Khôi phục file hỏng bằng File Signatures)
+- **33 - StrangeCipher:** Cryptography (Mật mã đối xứng XOR)
+- **34 - LogAnalysis:** Điều tra số Web Server Log & Base64
+- **35 - ZipInZip:** Lập trình giải nén đa lớp tự động (Scripting)
+- **36 - ReverseMe:** Dịch ngược file bytecode của Python (.pyc)
 
 ---
 

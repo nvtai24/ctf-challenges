@@ -98,8 +98,32 @@ Challenge 30 - Ret2Libc (Stack/ASLR)
 Flag: FCTF{r3t2l1bc_4slr_byp4ss_m4st3r}
 Exploit: Leak puts address, calculate libc base, ROP to system
 
+Challenge 31 - HiddenInPlainSight (Steganography)
+Flag: FLAG{st3g0_1s_3asy_wh3n_1ts_1n_pl41n_s1ght}
+Exploit: strings secret_image.jpg
+
+Challenge 32 - CorruptedHeader (Forensics)
+Flag: FLAG{m4g1c_byt3s_s4v3_th3_d4y}
+Exploit: Fix PNG magic bytes 89 50 4E 47 0D 0A 1A 0A
+
+Challenge 33 - StrangeCipher (Cryptography)
+Flag: FLAG{x0r_c1ph3r_1s_w34k_but_fun}
+Exploit: XOR ciphertext with "secret_key"
+
+Challenge 34 - LogAnalysis (Network Forensics)
+Flag: FLAG{n3tw0rk_tr4ff1c_n3v3r_l13s}
+Exploit: Base64 decode parameter from access.log
+
+Challenge 35 - ZipInZip (Misc)
+Flag: FLAG{z1p_b0mbs_4r3_4nn0y1ng}
+Exploit: Python script to extract 50 nested zip files
+
+Challenge 36 - ReverseMe (Reverse Engineering)
+Flag: FLAG{pyth0n_byt3c0d3_r3v3rs1ng}
+Exploit: Decompile checker.pyc with uncompyle6
+
 ===============================================
-TOTAL: 24 FLAGS
+TOTAL: 30 FLAGS
 ===============================================
 
 Quick Reference:

