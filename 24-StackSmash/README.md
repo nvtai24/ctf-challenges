@@ -1,5 +1,7 @@
 # 💥 Stack Smash
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Một sinh viên năm nhất vừa nộp bài tập lớn môn Lập trình C: Một phần mềm dòng lệnh quản lý thư viện sách. Phần mềm yêu cầu người dùng nhập tên sách bằng lệnh `gets()`. Vị giáo sư già cảnh báo rằng phần mềm này rất nguy hiểm và có thể bị hacker chiếm quyền điều khiển toàn bộ máy tính, nhưng cậu sinh viên vẫn chưa hiểu vì sao.
 

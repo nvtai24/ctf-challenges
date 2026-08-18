@@ -1,5 +1,7 @@
 # 🧟 Use After Free
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Ứng dụng C++ quản lý đội hình chiến binh cho phép bạn tạo chiến binh mới, nâng cấp họ, và giải tán (xóa) chiến binh khỏi đội hình. Khi giải tán, bộ nhớ của chiến binh đó sẽ được trả lại cho hệ thống. 
 

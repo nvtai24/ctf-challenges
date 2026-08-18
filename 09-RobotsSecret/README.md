@@ -1,5 +1,7 @@
 # 🤖 Robots Secret
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Một nhóm tin tặc mũ xám đang chia sẻ tài liệu mật trên một website ẩn danh. Để ngăn chặn các công cụ tìm kiếm (như Google, Bing) tự động thu thập và hiển thị các tài liệu nhạy cảm này trên kết quả tìm kiếm, họ đã thiết lập các quy tắc rất nghiêm ngặt nhằm hướng dẫn các con bot thu thập dữ liệu (Crawler) không được phép truy cập vào các thư mục chứa dữ liệu mật.
 

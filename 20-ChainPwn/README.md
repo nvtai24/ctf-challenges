@@ -1,5 +1,7 @@
 # ⛓️ Chain Pwn
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Công ty WebCloud có một hệ thống máy chủ rất vững chắc bảo vệ bằng Firewall. Chỉ có một chức năng duy nhất được mở ra bên ngoài là "Preview Website" - cho phép người dùng nhập URL để máy chủ chụp ảnh trang web đó.
 

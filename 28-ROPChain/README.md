@@ -1,5 +1,7 @@
 # 🔗 ROP Chain
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Hệ thống bảo mật tiên tiến đã bật tính năng NX/DEP (Non-Executable Stack). Dù bạn có khai thác được lỗi Tràn bộ đệm để đưa mã độc (shellcode) vào Stack, hệ điều hành cũng sẽ từ chối thực thi bất kỳ đoạn mã nào nằm ở đó và đóng băng chương trình.
 

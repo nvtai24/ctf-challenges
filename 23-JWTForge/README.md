@@ -1,5 +1,7 @@
 # 🔨 JWT Forge
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Hệ thống JWT mới được thiết kế chuẩn xác với thuật toán bảo mật bất đối xứng RS256 (có Public Key và Private Key). Private Key được giữ trên máy chủ vô cùng an toàn, còn Public Key được cấp cho các vệ tinh để kiểm tra chữ ký token. Hệ thống lấy Public Key từ một đường dẫn cấu hình sẵn trong Header của token (tham số `jku`).
 

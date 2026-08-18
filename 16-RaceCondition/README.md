@@ -1,5 +1,7 @@
 # 🏎️ Race Condition
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Sàn giao dịch tiền ảo "CryptoFast" cho phép người dùng đổi mã Voucher để nhận 1 đồng xu nền tảng. Mã Voucher chỉ được sử dụng một lần duy nhất. Hệ thống chạy rất nhanh và có vẻ như họ đã viết hàm kiểm tra Voucher hợp lệ trước, rồi mới tiến hành xóa Voucher đó khỏi cơ sở dữ liệu ở dòng code tiếp theo.
 

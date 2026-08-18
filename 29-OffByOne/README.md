@@ -1,5 +1,7 @@
 # ✂️ Off By One
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Một đoạn mã C viết thủ công hàm sao chép chuỗi với độ an toàn cực cao. Nó khai báo bộ đệm 64 bytes và chạy vòng lặp sao chép từng ký tự. Vòng lặp điều kiện được viết là: `for (int i = 0; i <= 64; i++)`.
 

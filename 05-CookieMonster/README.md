@@ -1,5 +1,7 @@
 # 🍪 Cookie Monster
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Một cửa hàng bánh ngọt trực tuyến có tên "Sweet Treats" đang phát hành một loại bánh quy giới hạn. Để được mua loại bánh này, bạn phải là thành viên hạng VIP. Khi người dùng đăng nhập vào hệ thống, họ nhận được một chiếc "Cookie" (trên trình duyệt) lưu trữ trạng thái phiên làm việc.
 

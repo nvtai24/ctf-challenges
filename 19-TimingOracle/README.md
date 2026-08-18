@@ -1,5 +1,7 @@
 # ⏱️ Timing Oracle
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Một tổ chức tội phạm đã tạo ra một chiếc hộp an toàn kỹ thuật số. Khi bạn nhập một đoạn mật khẩu 20 ký tự, máy chủ sẽ so sánh từng chữ cái một với mật khẩu thật. Nếu chữ cái đầu tiên sai, nó ngay lập tức báo "Sai". Nếu chữ cái đầu tiên đúng, nó mới kiểm tra tiếp chữ cái thứ hai.
 

@@ -1,5 +1,7 @@
 # 🙈 Blind Search
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Kho lưu trữ dữ liệu của cục tình báo có một thanh tìm kiếm tài liệu chuyên dụng. Giao diện trang web được thiết kế cực kỳ tối giản: nếu bạn tìm thấy kết quả, trang sẽ hiện chữ "Found". Nếu không, trang hiện "Not Found". Không có bất kỳ lỗi SQL nào được in ra màn hình, cũng không có dữ liệu thật nào hiển thị.
 

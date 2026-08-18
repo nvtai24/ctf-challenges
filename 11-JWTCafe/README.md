@@ -1,5 +1,7 @@
 # ☕ JWT Cafe
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Quán cà phê "NextGen Cafe" vừa nâng cấp app đặt hàng của họ lên kiến trúc Microservices và quyết định sử dụng JSON Web Token (JWT) để duy trì phiên đăng nhập thay vì Session truyền thống. Lập trình viên thiết lập JWT bảo rằng: "JWT là công nghệ mã hóa không thể bị phá vỡ vì nó có chữ ký bảo mật".
 

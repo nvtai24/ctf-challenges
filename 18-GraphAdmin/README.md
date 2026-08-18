@@ -1,5 +1,7 @@
 # 🕸️ Graph Admin
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Theo xu hướng hiện đại, công ty đã đập bỏ toàn bộ REST API cũ để chuyển sang sử dụng GraphQL, một truy vấn dữ liệu linh hoạt giúp Frontend gọi bao nhiêu dữ liệu tùy thích.
 

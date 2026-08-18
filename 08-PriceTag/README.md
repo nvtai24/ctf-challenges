@@ -1,5 +1,7 @@
 # 🏷️ Price Tag
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Hệ thống thương mại điện tử "BuyEverything" đang tổ chức một chương trình dùng thử, tặng mỗi tài khoản mới đăng ký số dư là $50. Cửa hàng bán các mặt hàng lưu niệm rất rẻ, nhưng có một mặt hàng có tên là "Flag" lại được định giá tận $9999.
 

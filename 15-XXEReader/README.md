@@ -1,5 +1,7 @@
 # 📑 XXE Reader
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Công ty DataAnalytics Inc vừa tung ra một công cụ phân tích tự động. Nó cho phép doanh nghiệp tải lên danh sách nhân sự dưới định dạng XML, sau đó trả về biểu đồ phân bổ nhân lực. 
 

@@ -1,5 +1,7 @@
 # Thử thách 32: Corrupted Header
 
+**Thể loại (Category):** Forensic
+
 ## 📖 Bối cảnh (Context)
 Chúng tôi thu được file ảnh `corrupted_image.png` từ máy tính của nghi phạm, nhưng có vẻ nó đã bị làm hỏng cố ý để không thể mở được. Trình xem ảnh báo lỗi định dạng không hợp lệ. Hãy khôi phục lại cấu trúc của file này để đọc nội dung bên trong.
 

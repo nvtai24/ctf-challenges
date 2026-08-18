@@ -1,5 +1,7 @@
 # 📤 Upload Shell
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Diễn đàn chia sẻ ảnh "ImgShare" đang mở sự kiện thi ảnh đẹp. Người dùng có thể đăng ký tài khoản và tải lên các bức ảnh với định dạng .png hoặc .jpg. Đội ngũ quản trị tự tin rằng họ đã kiểm tra kỹ đuôi file tải lên trên Frontend bằng JavaScript để ngăn chặn mã độc.
 

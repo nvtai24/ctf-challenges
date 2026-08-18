@@ -1,5 +1,7 @@
 # 📂 File Viewer
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Trường Đại học XYZ đang triển khai một trang portal mới cho phép sinh viên tải lên và xem lại các tài liệu bài giảng trực tuyến. Tính năng "View File" nhận tham số là tên của file tài liệu để hiển thị trực tiếp nội dung trên trình duyệt web, giúp sinh viên không cần tải file về máy.
 

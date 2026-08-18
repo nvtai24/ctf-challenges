@@ -1,5 +1,7 @@
 # Thử thách 33: Strange Cipher
 
+**Thể loại (Category):** Cryptography
+
 ## 📖 Bối cảnh (Context)
 Chúng tôi bắt được một đoạn mã hóa lạ nằm trong file `ciphertext.txt`, cùng với một đoạn script Python `encrypt.py` - dường như là thuật toán đã tạo ra nó. Khóa mã hóa đã bị giấu đi, hoặc có thể nó đã bị rò rỉ đâu đó trong mã nguồn. Hãy viết script giải mã để tìm lại cờ.
 

@@ -1,5 +1,7 @@
 # 🖨️ Format String
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Phần mềm quản lý nhật ký hệ thống nhận một chuỗi từ người dùng và phản hồi lại câu "Đã ghi nhận: <chuỗi_bạn_vừa_nhập>". Mã nguồn C của phần mềm được viết rất ngắn gọn: `printf(user_input);` thay vì chuẩn mực `printf("%s", user_input);`.
 

@@ -1,5 +1,7 @@
 # 📝 Secret Note
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Startup "KeepItSafe" vừa tung ra một ứng dụng ghi chú trực tuyến, quảng cáo rằng nền tảng của họ sử dụng "công nghệ điện toán đám mây" giúp người dùng chia sẻ ghi chú bí mật một cách cực kỳ an toàn. Người dùng chỉ cần đăng ký tài khoản là có thể tạo ghi chú, và mỗi ghi chú được đánh một mã ID riêng biệt.
 

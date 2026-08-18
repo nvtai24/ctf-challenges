@@ -1,5 +1,7 @@
 # 🗄️ SQLi Login
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Rút kinh nghiệm từ bài học Login Bypass, đội Dev đã bật cơ chế lọc (WAF) để loại bỏ các ký tự dấu cách (space) và một số từ khóa như `OR`, `AND`. Hơn thế nữa, họ đã ngăn cấm người dùng tự động đăng nhập dù câu lệnh SQL có trả về TRUE đi chăng nữa.
 

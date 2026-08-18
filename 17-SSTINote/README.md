@@ -1,5 +1,7 @@
 # 📝 SSTI Note
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Trang web tạo Landing Page cá nhân cho phép bạn nhập các đoạn văn bản có cấu trúc để hiển thị linh hoạt. Nhà phát triển sử dụng một Template Engine (như Jinja2 hoặc Twig) để tự động thay thế tên người dùng vào trang web, ví dụ: `Xin chào {{ user.name }}`.
 

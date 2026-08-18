@@ -1,5 +1,7 @@
 # 🏦 CSRF Bank
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Ngân hàng "TrustedBank" tung ra tính năng chuyển khoản 1-click rất tiện lợi. Khi bạn đang đăng nhập, bạn chỉ cần bấm vào một đường link nội bộ là tiền sẽ lập tức được chuyển cho đối tác mà không cần xác thực OTP gì thêm.
 

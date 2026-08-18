@@ -1,5 +1,7 @@
 # 🧮 Integer Overflow
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Một trò chơi RPG trực tuyến cho phép người chơi đổi tiền Vàng lấy Đá quý. Hệ thống quy định 1 Đá quý giá 100 Vàng. Số lượng Đá quý bạn muốn mua được lưu bằng biến số nguyên dương nhỏ (kiểu `short int` 16-bit, giá trị tối đa là 32767). 
 

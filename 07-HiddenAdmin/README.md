@@ -1,5 +1,7 @@
 # 🕵️ Hidden Admin
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Một công ty phần mềm vừa tạo ra trang quản trị nội dung (CMS). Thay vì xây dựng một hệ thống phân quyền phức tạp, các lập trình viên Frontend lại quyết định bảo mật chức năng bằng cách... dùng CSS để ẩn (`display: none`) các nút bấm dành cho Admin, hoặc dùng trường `type="hidden"` trong form dữ liệu HTML đối với các tài khoản thường.
 

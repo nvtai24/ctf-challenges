@@ -1,5 +1,7 @@
 # 🔐 Login Bypass
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Tập đoàn công nghệ GlobalTech vừa ra mắt một cổng thông tin nội bộ (Intranet Portal) hoàn toàn mới dành riêng cho Ban Giám đốc. Các kỹ sư của GlobalTech rất tự hào về giao diện hiện đại và tốc độ phản hồi cực nhanh của hệ thống này. Tuy nhiên, do áp lực phải bàn giao dự án đúng tiến độ, đội ngũ phát triển (Dev) đã bỏ qua khâu kiểm thử bảo mật độc lập và tiến hành deploy thẳng lên môi trường Production.
 

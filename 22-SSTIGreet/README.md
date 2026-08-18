@@ -1,5 +1,7 @@
 # 👋 SSTI Greet
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Dịch vụ tạo thiệp chúc mừng điện tử này dường như đã biết về lỗ hổng SSTI nên họ đã thiết lập một bộ lọc (Filter) rất gắt gao. Họ cấm các từ khóa nhạy cảm như `class`, `mro`, `subclasses`, `os`, `import`, và thậm chí cấm cả dấu ngoặc vuông `[` `]` hoặc dấu ngoặc kép.
 

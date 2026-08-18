@@ -1,5 +1,7 @@
 # Thử thách 36: Reverse Me
 
+**Thể loại (Category):** Reverse Engineering
+
 ## 📖 Bối cảnh (Context)
 Chúng tôi tìm thấy một ứng dụng xác thực nho nhỏ được viết bằng Python. Tuy nhiên, lập trình viên đã biên dịch nó sang định dạng bytecode `.pyc` nhằm mục đích che giấu mã nguồn. Hãy tìm cách dịch ngược (decompile) file `.pyc` này để khôi phục mã nguồn và lấy flag nhé.
 

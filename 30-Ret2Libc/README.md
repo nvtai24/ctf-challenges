@@ -1,5 +1,7 @@
 # 📚 Return To Libc
 
+**Thể loại (Category):** Pwn
+
 ## 📖 Bối cảnh (Context)
 Một thử thách Pwnable kinh điển. Hệ thống bật NX (không cho chạy mã độc trên Stack) và bật cả ASLR (địa chỉ bộ nhớ thư viện thay đổi ngẫu nhiên sau mỗi lần chạy). File nhị phân bị lỗi Buffer Overflow, nhưng bên trong file hoàn toàn không chứa đoạn mã nào gọi hàm `system` hay có sẵn chuỗi `"/bin/sh"` để bạn ráp ROP Gadget.
 

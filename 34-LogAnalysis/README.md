@@ -1,5 +1,7 @@
 # Thử thách 34: Log Analysis
 
+**Thể loại (Category):** Forensic
+
 ## 📖 Bối cảnh (Context)
 Máy chủ web của chúng tôi đã bị tấn công vào rạng sáng nay. Đội ngũ an ninh đã trích xuất được file nhật ký truy cập `access.log`. Kẻ tấn công dường như đã sử dụng lỗ hổng SQL Injection và trích xuất thành công một thông tin bí mật. Bạn hãy phân tích file log để tìm lại thông tin đó nhé.
 

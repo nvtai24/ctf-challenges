@@ -1,5 +1,7 @@
 # 🔑 Forget Me
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Mạng xã hội ConnectUS nhận được phàn nàn rằng tính năng quên mật khẩu của họ quá rườm rà. Lắng nghe người dùng, đội Dev đã tung ra tính năng lấy lại mật khẩu nhanh bằng cách gửi một đường link kèm token đến email của người dùng. 
 

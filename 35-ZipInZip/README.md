@@ -1,5 +1,7 @@
 # Thử thách 35: Zip In Zip
 
+**Thể loại (Category):** Misc
+
 ## 📖 Bối cảnh (Context)
 Hacker đã giấu flag vào một file nén. Tuy nhiên, hắn quá rảnh rỗi nên đã nén file đó lại... 50 lần (theo kiểu búp bê Nga Russian Doll)! Việc giải nén từng file bằng tay có vẻ bất khả thi. Hãy dùng kỹ năng lập trình của bạn để giải nén tự động và lấy cờ.
 

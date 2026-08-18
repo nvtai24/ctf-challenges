@@ -1,5 +1,7 @@
 # 📖 Guest Book
 
+**Thể loại (Category):** Web
+
 ## 📖 Bối cảnh (Context)
 Diễn đàn Hacker Space vừa mở một "Cuốn sổ lưu bút" (Guestbook) công khai. Bất kỳ ai cũng có thể để lại lời chào hoặc thông điệp ẩn danh. Quản trị viên (Admin) của diễn đàn là một người rất nhiệt tình, họ sẽ đăng nhập vào hệ thống và đọc mọi lời nhắn mới cứ mỗi 5 phút một lần.
 
